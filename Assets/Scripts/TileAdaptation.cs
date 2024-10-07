@@ -31,13 +31,11 @@ public class TileAdaptation : MonoBehaviour
     {
         if (tilemap.GetTile(cellPos) == null) return;
 
-        // Check the neighboring fields
         bool hasFieldAbove = CheckForNeighbor(cellPos, Vector2Int.up);
         bool hasFieldBelow = CheckForNeighbor(cellPos, Vector2Int.down);
         bool hasFieldLeft = CheckForNeighbor(cellPos, Vector2Int.left);
         bool hasFieldRight = CheckForNeighbor(cellPos, Vector2Int.right);
 
-        // Determine sprite based on the neighbors
         int spriteIndex = GetSpriteIndex(hasFieldAbove, hasFieldBelow, hasFieldLeft, hasFieldRight);
 
         tilemap.SetTile(cellPos, tilemap.Get(spriteIndex));
@@ -51,7 +49,7 @@ public class TileAdaptation : MonoBehaviour
 
     int GetSpriteIndex(bool hasAbove, bool hasBelow, bool hasLeft, bool hasRight)
     {
-        Debug.Log(hasAbove + " " + hasBelow + " " + hasLeft + " " + hasRight);
+        // Debug.Log(hasAbove + " " + hasBelow + " " + hasLeft + " " + hasRight);
         /*
           0 1 2
           3 4 5

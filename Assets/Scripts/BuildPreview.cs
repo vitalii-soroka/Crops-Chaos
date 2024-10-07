@@ -2,75 +2,72 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Linq;
+using UnityEngine.UIElements;
 
 public class BuildPreview : MonoBehaviour
 {
     /// <summary>
     /// Make to work with common objects and tilemaps seperatly
     /// </summary>
-
-    public BuildingSelectionMenu menu;
-    public GameObject buildingPrefab;  // The building to be placed
-
-    // TEMP
-    public TileMapWrapper tileMapWrapper;
-    public TileMapWrapper tileMapWrapper2;
-
-    private GameObject previewInstance; // The preview instance
+   
+    public Color errorColor = Color.red;
+    private Color defaultColor = Color.white;
 
     public float cellSize = 1f; // Size of each grid cell
+
+    public GameObject buildingPrefab;  // The building to be placed
+    public BuildingSelectionMenu menu;
+    public TileMapWrapper tileMap;
+
+    private GameObject previewInstance; // The preview instance
 
     public void Start()
     {
         menu.BuildingSelected += OnSelect;
     }
 
-    public void OnSelect(GameObject prefab)
+    public void OnSelect(GameObject prefab, TileMapWrapper map)
     {
         if (prefab == null) return;
 
-        Destroy(previewInstance);
+        if (previewInstance != null) Destroy(previewInstance);
+
+        tileMap = map;
         buildingPrefab = prefab;
-
         previewInstance = Instantiate(buildingPrefab, transform.position, Quaternion.identity);
-        SetPreviewTransparency(previewInstance, 0.5f);
-    }
 
-    public Vector3 SnapToGrid(Vector3 rawPosition)
-    {
-        float x = Mathf.Floor(rawPosition.x / cellSize) * cellSize + cellSize / 2;
-        float y = Mathf.Floor(rawPosition.y / cellSize) * cellSize + cellSize / 2;
-        return new Vector3(x, y, 0);
+        SetPreviewTransparency(previewInstance, 0.5f);
+
     }
 
     private void OnDisable()
     {
-       Destroy(previewInstance);
+        CancelPlacement();
     }
 
     void Update()
     {
-        // TODO Remake to use tileSprite
 
-        if (menu.GetSelectedBuilding() == null) return;
-
-        //if (buildingPrefab == null)
-        //{
-        //    buildingPrefab = menu.GetSelectedBuilding();
-        //}
-
-        //if (previewInstance == null && buildingPrefab != null)
-        //{
-            
-        //}
+        if (menu.GetSelectedBuilding() == null || previewInstance == null) return;
 
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 snappedPosition = SnapToGrid(mousePosition);
+
         previewInstance.transform.position = snappedPosition;
 
-        if (Input.GetMouseButtonDown(0))  
+        if (tileMap && tileMap.HasTile(mousePosition) )
         {
-            ConfirmPlacement(snappedPosition);
+            SetPreviewColor(previewInstance, Color.red);
+        }
+        else 
+        {
+            SetPreviewColor(previewInstance, Color.white);
+        }
+
+        if (Input.GetMouseButtonDown(0) && IsValidPlacement(snappedPosition))  
+        {
+           ConfirmPlacement(snappedPosition);
         }
 
         if (Input.GetMouseButtonDown(1)) 
@@ -81,37 +78,51 @@ public class BuildPreview : MonoBehaviour
 
     void ConfirmPlacement(Vector3 position)
     {
-        // TEMP
-        if (previewInstance.TryGetComponent<Field>(out var x)) 
-            tileMapWrapper.SetTileNotify(tileMapWrapper.WorldToCell(position));
-        else
-            tileMapWrapper2.SetTileNotify(tileMapWrapper.WorldToCell(position));
-
-        if (IsValidPlacement(position))
-        {
-            //Destroy(previewInstance);
-        }
-
+        tileMap.SetTileNotify(tileMap.WorldToCell(position));
     }
 
     void CancelPlacement()
     {
         Destroy(previewInstance);
+        tileMap = null;
     }
 
     bool IsValidPlacement(Vector3 position)
     {
-        return true;
+        return !tileMap.HasTile(position);
     }
 
-    void SetPreviewTransparency(GameObject building, float alpha)
+    void SetPreviewTransparency(GameObject obj, float alpha)
     {
-        Renderer[] renderers = building.GetComponentsInChildren<Renderer>();
-        foreach (Renderer rend in renderers)
+        if (obj.TryGetComponent<SpriteRenderer>(out var renderer))
         {
-            Color color = rend.material.color;
-            color.a = alpha; // Set transparency
-            rend.material.color = color;
+            Color color = renderer.material.color;
+            color.a = alpha;
+            renderer.material.color = color;
         }
+
+        //Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
+        //foreach (Renderer rend in renderers)
+        //{
+        //    Color color = rend.material.color;
+        //    color.a = alpha; // Set transparency
+        //    rend.material.color = color;
+        //}
+    }
+
+    void SetPreviewColor(GameObject obj, Color color)
+    {
+        if (obj.TryGetComponent<SpriteRenderer>(out var renderer) 
+            && renderer.material.color != color)
+        {
+            renderer.material.color = color;
+        }
+    }
+
+    public Vector3 SnapToGrid(Vector3 rawPosition)
+    {
+        float x = Mathf.Floor(rawPosition.x / cellSize) * cellSize + cellSize / 2;
+        float y = Mathf.Floor(rawPosition.y / cellSize) * cellSize + cellSize / 2;
+        return new Vector3(x, y, 0);
     }
 }

@@ -27,5 +27,4 @@ public class BuildingSelectionMenu : MonoBehaviour
         return selectedPrefab;
     }
 
-    
 }

@@ -16,31 +16,47 @@ public class BuildPreview : MonoBehaviour
 
     public float cellSize = 1f; // Size of each grid cell
 
-    public GameObject buildingPrefab;  // The building to be placed
-    public BuildingSelectionMenu menu;
-    public TileMapWrapper tileMap;
+    //public GameObject buildingPrefab;  // The building to be placed
+    // public BuildingSelectionMenu menu;
+    // public TileMapWrapper tileMap;
 
     private GameObject previewInstance; // The preview instance
 
-    [SerializeField] private TileWrapper tileWrapper;
+    //[SerializeField] private TileWrapper tileWrapper;
 
     public void Start()
     {
-        menu.BuildingSelected += OnSelect;
+        //menu.BuildingSelected += OnSelect;
     }
 
-    public void OnSelect(GameObject prefab, TileMapWrapper map)
+    public Vector3 GetPreviewPosition()
     {
-        if (prefab == null) return;
+        if (previewInstance == null) return default(Vector3); 
+        else return previewInstance.transform.position;
+    }
+
+    public void Preview(GameObject preview)
+    {
+        if (preview == null) return;
 
         if (previewInstance != null) Destroy(previewInstance);
 
-        tileMap = map;
-        buildingPrefab = prefab;
-        previewInstance = Instantiate(buildingPrefab, transform.position, Quaternion.identity);
-
+        previewInstance = Instantiate(preview, transform.position, Quaternion.identity);
         SetPreviewTransparency(previewInstance, 0.5f);
     }
+
+    //public void OnSelect(GameObject prefab, TileMapWrapper map)
+    //{
+    //    if (prefab == null) return;
+
+    //    if (previewInstance != null) Destroy(previewInstance);
+
+    //    tileMap = map;
+    //    buildingPrefab = prefab;
+    //    previewInstance = Instantiate(buildingPrefab, transform.position, Quaternion.identity);
+
+    //    SetPreviewTransparency(previewInstance, 0.5f);
+    //}
 
     private void OnDisable()
     {
@@ -50,49 +66,31 @@ public class BuildPreview : MonoBehaviour
     void Update()
     {
 
-        if (menu.GetSelectedBuilding() == null || previewInstance == null) return;
+        if (previewInstance == null) return;
 
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 snappedPosition = SnapToGrid(mousePosition);
 
         previewInstance.transform.position = snappedPosition;
-
-        if (tileMap && tileMap.HasTile(mousePosition) )
-        {
-            SetPreviewColor(previewInstance, Color.red);
-        }
-        else 
-        {
-            SetPreviewColor(previewInstance, Color.white);
-        }
-
-        if (Input.GetMouseButtonDown(0) && IsValidPlacement(snappedPosition))  
-        {
-           ConfirmPlacement(snappedPosition);
-        }
-
-        if (Input.GetMouseButtonDown(1)) 
-        {
-            CancelPlacement();
-        }
     }
 
-    void ConfirmPlacement(Vector3 position)
+    public void Clear()
     {
-        tileMap.SetTileNotify(tileMap.WorldToCell(position));
-
-        tileMap.DrawTileWrapper(tileWrapper, tileMap.WorldToCell(position));
+        if (previewInstance != null) Destroy(previewInstance);
+        //tileMap = null;
     }
+
+    //void ConfirmPlacement(Vector3 position)
+    //{
+    //    tileMap.SetTileNotify(tileMap.WorldToCell(position));
+
+    //    tileMap.DrawTileWrapper(tileWrapper, tileMap.WorldToCell(position));
+    //}
 
     void CancelPlacement()
     {
         Destroy(previewInstance);
-        tileMap = null;
-    }
-
-    bool IsValidPlacement(Vector3 position)
-    {
-        return !tileMap.HasTile(position);
+        //tileMap = null;
     }
 
     void SetPreviewTransparency(GameObject obj, float alpha)
@@ -113,14 +111,24 @@ public class BuildPreview : MonoBehaviour
         //}
     }
 
-    void SetPreviewColor(GameObject obj, Color color)
+    public void SetPreviewColor(Color color)
     {
-        if (obj.TryGetComponent<SpriteRenderer>(out var renderer) 
+        if (previewInstance != null 
+            && previewInstance.TryGetComponent<SpriteRenderer>(out var renderer)
             && renderer.material.color != color)
         {
             renderer.material.color = color;
         }
     }
+
+    //public void SetPreviewColor(GameObject obj, Color color)
+    //{
+    //    if (obj.TryGetComponent<SpriteRenderer>(out var renderer) 
+    //        && renderer.material.color != color)
+    //    {
+    //        renderer.material.color = color;
+    //    }
+    //}
 
     public Vector3 SnapToGrid(Vector3 rawPosition)
     {

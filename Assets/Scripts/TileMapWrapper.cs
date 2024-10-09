@@ -9,17 +9,25 @@ public class TileMapWrapper : MonoBehaviour
     [SerializeField] private Tilemap tilemap;
     [SerializeField] private Tile[] tiles;
 
+    public void DrawTileWrapper(TileWrapper tile, Vector3Int centerPos)
+    {
+        for(int i = 0; i < tile.Length; ++i)
+        {
+            SetTile(centerPos, tiles[i]);
+
+            centerPos += i % tile.Width == 0 ? new Vector3Int(0,1) : new Vector3Int(1,0);
+        }
+    }
+
     public delegate void TileChangeHandler(Vector3Int position, TileBase newTile);
     public event TileChangeHandler OnTileChanged;
 
     public delegate void TileChange(Vector3Int position);
     public event TileChange OnTileChange;
-
     void Start()
     {
         tilemap = GetComponent<Tilemap>();
     }
-
     public void SetTileNotify(Vector3Int position, TileBase tile)
     {
         tilemap.SetTile(position, tile);

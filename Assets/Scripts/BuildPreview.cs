@@ -22,6 +22,8 @@ public class BuildPreview : MonoBehaviour
 
     private GameObject previewInstance; // The preview instance
 
+    [SerializeField] private TileWrapper tileWrapper;
+
     public void Start()
     {
         menu.BuildingSelected += OnSelect;
@@ -38,7 +40,6 @@ public class BuildPreview : MonoBehaviour
         previewInstance = Instantiate(buildingPrefab, transform.position, Quaternion.identity);
 
         SetPreviewTransparency(previewInstance, 0.5f);
-
     }
 
     private void OnDisable()
@@ -79,6 +80,8 @@ public class BuildPreview : MonoBehaviour
     void ConfirmPlacement(Vector3 position)
     {
         tileMap.SetTileNotify(tileMap.WorldToCell(position));
+
+        tileMap.DrawTileWrapper(tileWrapper, tileMap.WorldToCell(position));
     }
 
     void CancelPlacement()

@@ -4,11 +4,21 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
 
+public enum TileMapWrapperLayers
+{
+    Background,
+    Ground,
+    OnGround,
+    Build
+}
+
 public class TileMapWrapper : MonoBehaviour
 {
     [SerializeField] private Tilemap tilemap;
     [SerializeField] private Tile[] tiles;
-    
+
+    //[SerializeField] private TileMapWrapperLayers[] ignoreLayers;
+    [SerializeField] private CompositeCollider2D compositeCollider2D; 
 
     public void DrawTileWrapper(TileWrapper tile, Vector3Int centerPos)
     {
@@ -29,6 +39,12 @@ public class TileMapWrapper : MonoBehaviour
     void Start()
     {
         tilemap = GetComponent<Tilemap>();
+        compositeCollider2D = GetComponent<CompositeCollider2D>();
+    }
+
+    public bool HasCollider()
+    {
+        return compositeCollider2D != null;
     }
 
     public void SetTileNotify(Vector3Int position, TileBase tile)

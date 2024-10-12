@@ -7,26 +7,16 @@ using UnityEngine.UIElements;
 
 public class BuildPreview : MonoBehaviour
 {
-    /// <summary>
-    /// Make to work with common objects and tilemaps seperatly
-    /// </summary>
-   
-    public Color errorColor = Color.red;
+    
     private Color defaultColor = Color.white;
+    public Color errorColor = Color.red;
 
-    public float cellSize = 1f; // Size of each grid cell
+    public float cellSize = 1f; 
+    private GameObject previewInstance; 
 
-    //public GameObject buildingPrefab;  // The building to be placed
-    // public BuildingSelectionMenu menu;
-    // public TileMapWrapper tileMap;
-
-    private GameObject previewInstance; // The preview instance
-
-    //[SerializeField] private TileWrapper tileWrapper;
-
-    public void Start()
+    public bool HasPreview()
     {
-        //menu.BuildingSelected += OnSelect;
+        return previewInstance != null;
     }
 
     public Vector3 GetPreviewPosition()
@@ -35,28 +25,23 @@ public class BuildPreview : MonoBehaviour
         else return previewInstance.transform.position;
     }
 
-    public void Preview(GameObject preview)
+    public void CreatePreview(GameObject prefab)
     {
-        if (preview == null) return;
+        if (prefab == null) return;
 
         if (previewInstance != null) Destroy(previewInstance);
 
-        previewInstance = Instantiate(preview, transform.position, Quaternion.identity);
-        SetPreviewTransparency(previewInstance, 0.5f);
+        previewInstance = Instantiate(prefab, transform.position, Quaternion.identity);
+        
+        if (previewInstance != null)
+        {
+            SetPreviewTransparency(previewInstance, 0.5f);
+            if (previewInstance.TryGetComponent<Collider2D>(out var collider))
+            {
+                collider.enabled = false;
+            }
+        }
     }
-
-    //public void OnSelect(GameObject prefab, TileMapWrapper map)
-    //{
-    //    if (prefab == null) return;
-
-    //    if (previewInstance != null) Destroy(previewInstance);
-
-    //    tileMap = map;
-    //    buildingPrefab = prefab;
-    //    previewInstance = Instantiate(buildingPrefab, transform.position, Quaternion.identity);
-
-    //    SetPreviewTransparency(previewInstance, 0.5f);
-    //}
 
     private void OnDisable()
     {
@@ -65,7 +50,6 @@ public class BuildPreview : MonoBehaviour
 
     void Update()
     {
-
         if (previewInstance == null) return;
 
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -77,20 +61,11 @@ public class BuildPreview : MonoBehaviour
     public void Clear()
     {
         if (previewInstance != null) Destroy(previewInstance);
-        //tileMap = null;
     }
-
-    //void ConfirmPlacement(Vector3 position)
-    //{
-    //    tileMap.SetTileNotify(tileMap.WorldToCell(position));
-
-    //    tileMap.DrawTileWrapper(tileWrapper, tileMap.WorldToCell(position));
-    //}
 
     void CancelPlacement()
     {
         Destroy(previewInstance);
-        //tileMap = null;
     }
 
     void SetPreviewTransparency(GameObject obj, float alpha)
@@ -101,14 +76,6 @@ public class BuildPreview : MonoBehaviour
             color.a = alpha;
             renderer.material.color = color;
         }
-
-        //Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
-        //foreach (Renderer rend in renderers)
-        //{
-        //    Color color = rend.material.color;
-        //    color.a = alpha; // Set transparency
-        //    rend.material.color = color;
-        //}
     }
 
     public void SetPreviewColor(Color color)
@@ -120,15 +87,6 @@ public class BuildPreview : MonoBehaviour
             renderer.material.color = color;
         }
     }
-
-    //public void SetPreviewColor(GameObject obj, Color color)
-    //{
-    //    if (obj.TryGetComponent<SpriteRenderer>(out var renderer) 
-    //        && renderer.material.color != color)
-    //    {
-    //        renderer.material.color = color;
-    //    }
-    //}
 
     public Vector3 SnapToGrid(Vector3 rawPosition)
     {

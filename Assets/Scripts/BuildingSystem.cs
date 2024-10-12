@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
 
@@ -15,8 +16,12 @@ public class BuildingSystem : MonoBehaviour
 
     [SerializeField] private BuildingSelectionMenu menu;
 
-    private GameObject buildPrefab;
-    private TileMapWrapper buildTileMap;
+    [SerializeField] private GameObject buildParent;
+
+    [SerializeField] private float collisionOffset = 0.2f;
+
+    private GameObject buildPrefab = null;
+    private TileMapWrapper buildTileMap = null;
 
     private Vector3 lastPreviewPosition;
 
@@ -28,6 +33,7 @@ public class BuildingSystem : MonoBehaviour
             menu.enabled = false;
         }
     }
+
     private bool IsMenuValidAndEnabled()
     {
         return menu != null && menu.gameObject.activeSelf;
@@ -49,14 +55,19 @@ public class BuildingSystem : MonoBehaviour
 
     void Update()
     {
-        // TODO Add last transform pos
-
+        // When build menu is disabled
         if (!IsMenuValidAndEnabled()) return;
 
+        // When no Building
         if (!IsBuildingSelected()) return;
 
+        // Stop Building when using UI
+        if (IsMouseOverUI()) return;
+
+        // Updates only when need
         if (lastPreviewPosition != buildPreview.GetPreviewPosition())
         {
+            lastPreviewPosition = buildPreview.GetPreviewPosition();
             UpdatePreviewUI();
         }
 
@@ -71,11 +82,29 @@ public class BuildingSystem : MonoBehaviour
         }
     }
 
+    private bool IsMouseOverUI()
+    {
+        return EventSystem.current.IsPointerOverGameObject();
+    }
+
     private void ConfirmBuild()
     {
-        if (buildTileMap != null && buildPreview != null )
+        if (buildPreview == null || !buildPreview.HasPreview()) return;
+
+        // Build TileMap
+        if (buildTileMap != null)
         {
             buildTileMap.SetTileNotify(buildTileMap.WorldToCell(buildPreview.GetPreviewPosition()));
+        }
+        // Build other objects
+        else
+        {
+            var build = Instantiate(buildPrefab, buildPreview.GetPreviewPosition(), Quaternion.identity);
+
+            if (buildParent != null && build != null)
+            {
+                build.transform.SetParent(buildParent.transform, true);
+            }
         }
     }
 
@@ -86,30 +115,85 @@ public class BuildingSystem : MonoBehaviour
 
     private bool IsValidPlace()
     {
-        if (buildPrefab == null) return false;
+        if (buildPreview == null || !buildPreview.HasPreview()) return false;
 
-        if (buildTileMap == null || buildPreview == null) return false;
-       
-        if (buildTileMap.HasTile(buildPreview.GetPreviewPosition()))
+        // Case when we have tileMapWrapper object 
+        if (buildTileMap != null)
         {
-            return false;
+            // Can't place as same tile from same map already placed
+
+            if (!buildTileMap.HasCollider()) return !buildTileMap.HasTile(lastPreviewPosition);
+
+            // Second case for tilemaps with composite colliders
+            if (buildTileMap.HasCollider())
+            {
+                return !IsCollisionSprite();
+            }
+        }
+
+        if (buildPrefab.TryGetComponent<SpriteRenderer>(out var sprite))
+        {
+            if (IsCollisionSprite()) return false;
         }
 
         return true;
+    }
+
+    public bool IsCollisionSprite()
+    {
+        if (buildPrefab.TryGetComponent<SpriteRenderer>(out var sprite))
+        {
+            Vector2 boxSize = new Vector2(
+                sprite.bounds.size.x - collisionOffset,
+                sprite.bounds.size.y - collisionOffset
+                );
+            Vector2 boxCenter = lastPreviewPosition;
+
+            Collider2D hitCollider = Physics2D.OverlapBox(boxCenter, boxSize, 0f);
+            if (hitCollider != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void OnSelect(GameObject prefab, TileMapWrapper map = null)
     {
         if (prefab == null) return;
 
-
         buildPrefab = prefab;
-        if (map != null) buildTileMap = map;
 
         if (buildPreview != null)
         {
-            buildPreview.Preview(prefab);
+            buildPreview.CreatePreview(prefab);
             lastPreviewPosition = buildPreview.GetPreviewPosition();
         }
+
+        // For builds on TileMap
+        if (map != null) buildTileMap = map;
+        else buildTileMap = null;
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        //if (buildPrefab != null && buildPrefab.TryGetComponent<SpriteRenderer>(out var sprite))
+        //{
+        //    Vector2 boxSize = new Vector2(sprite.bounds.size.x, sprite.bounds.size.y);
+        //    Vector2 boxCenter = lastPreviewPosition;
+
+        //    Gizmos.color = Color.green;
+
+        //    Collider2D hitCollider = Physics2D.OverlapBox(boxCenter, boxSize, 0f);
+        //    if (hitCollider != null)
+        //    {
+        //        Gizmos.color = Color.red; 
+        //    }
+
+        //    Gizmos.DrawWireCube(boxCenter, boxSize);
+        //}
+    }
+#endif
 }

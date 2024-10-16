@@ -1,0 +1,62 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class InvenoryUI : MonoBehaviour
+{
+    [SerializeField] public Inventory inventory;
+    [SerializeField] public GameObject selectImage;
+    [SerializeField] public GameObject[] inventorySlots;
+
+    void Start()
+    {
+        if (inventory != null)
+        {
+            inventory.onSelect.AddListener(OnItemSelect);
+            inventory.onItemAdd.AddListener(OnSlotChanged);
+        }
+
+        if (selectImage != null && inventorySlots.Length > 0)
+        {
+            selectImage.transform.position = inventorySlots[0].transform.position;
+        }
+    }
+    public void OnItemSelect(int index)
+    {
+        if (index < 0 || index >= inventorySlots.Length) return;
+        if (selectImage == null || inventorySlots[index] == null) return;
+
+        selectImage.transform.position = inventorySlots[index].transform.position;
+    }
+    public void OnSlotChanged(Sprite itemSprite, int index)
+    {
+        Debug.Log("OnSlot");
+
+        if (index < 0 || index >= inventorySlots.Length) return;
+        if (selectImage == null || inventorySlots[index] == null) return;
+
+
+        var image = inventorySlots[index].GetComponentInChildren<Image>();
+        image.sprite = itemSprite;
+
+        MakeImageVisible(image);
+
+    }
+
+    public void MakeImageInvisible(Image image)
+    {
+        Color tempColor = image.color;
+        tempColor.a = 0f; // Set alpha to 0 (invisible)
+        image.color = tempColor;
+    }
+
+    // Make the image visible again
+    public void MakeImageVisible(Image image)
+    {
+        Color tempColor = image.color;
+        tempColor.a = 1f; // Set alpha to 1 (fully visible)
+        image.color = tempColor;
+    }
+
+}

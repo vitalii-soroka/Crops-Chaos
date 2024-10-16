@@ -9,6 +9,8 @@ public class DroppedItem : MonoBehaviour
     [SerializeField] private float moveSpeed = 1.0f;
     [SerializeField] private float stopDistance = 0.5f;
 
+    [SerializeField] private GameObject inventoryItemPrefab;
+
     private float timeSpent = 0.0f;
 
     private Collider2D pickUpCollider;
@@ -24,7 +26,7 @@ public class DroppedItem : MonoBehaviour
 
     void FixedUpdate()
     {
-        timeSpent += Time.deltaTime;
+        timeSpent += Time.fixedDeltaTime;
 
         if (timeSpent > dispawnTime)
         {
@@ -53,6 +55,13 @@ public class DroppedItem : MonoBehaviour
                 var managerObject = GameObject.Find("GameManager");
                 if (managerObject && managerObject.TryGetComponent<GameManager>(out var manager))
                 {
+                    Debug.Log("GameManager");
+
+                    manager.AddItemToInventory(inventoryItemPrefab);
+
+                    manager.AddItemToInventory(this.gameObject);
+
+
                     manager.AddCoins(1);
                 }
                 Despawn();
@@ -64,15 +73,24 @@ public class DroppedItem : MonoBehaviour
     {     
         if (collision == null) return;
 
-        if(collision.gameObject != null && collision.gameObject.transform != null)
+        if(collision.gameObject != null 
+            && collision.gameObject.transform != null)
         {
-            moveTo = collision.gameObject.transform;
+            // TEMP
+            //moveTo = collision.gameObject.transform;
+        }
+    }
+
+    public void SetTarget(Transform newTarget)
+    {
+        if (newTarget != null)
+        {
+            moveTo = newTarget;
         }
     }
 
     private void Despawn()
     {
-        // TODO
         Destroy(gameObject);
     }
 }

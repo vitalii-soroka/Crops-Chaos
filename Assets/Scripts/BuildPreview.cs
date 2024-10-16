@@ -14,6 +14,10 @@ public class BuildPreview : MonoBehaviour
     public float cellSize = 1f; 
     private GameObject previewInstance; 
 
+    private Vector3 lastMousePosInWorld = Vector3.zero;
+    private Vector2 spriteOffset = Vector2.zero; 
+
+
     public bool HasPreview()
     {
         return previewInstance != null;
@@ -31,15 +35,22 @@ public class BuildPreview : MonoBehaviour
 
         if (previewInstance != null) Destroy(previewInstance);
 
-        previewInstance = Instantiate(prefab, transform.position, Quaternion.identity);
         
+        previewInstance = Instantiate(prefab, transform.position, Quaternion.identity);
         if (previewInstance != null)
         {
-            SetPreviewTransparency(previewInstance, 0.5f);
             if (previewInstance.TryGetComponent<Collider2D>(out var collider))
             {
                 collider.enabled = false;
             }
+
+            if (previewInstance.TryGetComponent<SpriteRenderer>(out var spriteRenderer))
+            {
+               spriteOffset.x = (spriteRenderer.size.x % 2 == 0) ? 0 : cellSize / 2; 
+               spriteOffset.y = (spriteRenderer.size.y % 2 == 0) ? 0 : cellSize / 2;
+            }
+
+            SetPreviewTransparency(previewInstance, 0.5f);
         }
     }
 
@@ -52,15 +63,23 @@ public class BuildPreview : MonoBehaviour
     {
         if (previewInstance == null) return;
 
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 snappedPosition = SnapToGrid(mousePosition);
+        var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (mousePos != lastMousePosInWorld)
+        {
+            AdjustPreviewPosition();
+            lastMousePosInWorld = mousePos;
+        }
 
-        previewInstance.transform.position = snappedPosition;
+        //Vector3 snappedPosition = SnapPointToGrid(mousePosition);
+        //previewInstance.transform.position = snappedPosition;
     }
 
     public void Clear()
     {
         if (previewInstance != null) Destroy(previewInstance);
+
+        lastMousePosInWorld = Vector3.zero;
+        spriteOffset = Vector2.zero;
     }
 
     void CancelPlacement()
@@ -88,10 +107,22 @@ public class BuildPreview : MonoBehaviour
         }
     }
 
-    public Vector3 SnapToGrid(Vector3 rawPosition)
+    public Vector3 SnapPointToGrid(Vector3 rawPosition)
     {
-        float x = Mathf.Floor(rawPosition.x / cellSize) * cellSize + cellSize / 2;
-        float y = Mathf.Floor(rawPosition.y / cellSize) * cellSize + cellSize / 2;
+        
+        float x = Mathf.Floor(rawPosition.x / cellSize) * cellSize;
+        float y = Mathf.Floor(rawPosition.y / cellSize) * cellSize;
+
         return new Vector3(x, y, 0);
+    }
+
+    private void AdjustPreviewPosition()
+    {
+        if (previewInstance == null || previewInstance.transform == null) return;
+
+        float x = Mathf.Floor(lastMousePosInWorld.x / cellSize) * cellSize + spriteOffset.x;
+        float y = Mathf.Floor(lastMousePosInWorld.y / cellSize) * cellSize + spriteOffset.y;
+
+        previewInstance.transform.position = new Vector3(x, y, 0);
     }
 }

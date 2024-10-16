@@ -5,6 +5,8 @@ using UnityEngine;
 public class TriggerChecker : MonoBehaviour
 {
     [SerializeField] private string compareTag = "Field";
+    [SerializeField] private string[] tags;
+
     // [SerializeField] 
     // TODO Ignore Layers
 

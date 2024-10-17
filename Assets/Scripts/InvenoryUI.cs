@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,8 @@ public class InvenoryUI : MonoBehaviour
         {
             inventory.onSelect.AddListener(OnItemSelect);
             inventory.onItemAdd.AddListener(OnSlotChanged);
+
+            inventory.onInventoryChanged.AddListener(OnInventoryChange);
         }
 
         if (selectImage != null && inventorySlots.Length > 0)
@@ -22,6 +25,25 @@ public class InvenoryUI : MonoBehaviour
             selectImage.transform.position = inventorySlots[0].transform.position;
         }
     }
+
+    private void OnInventoryChange()
+    {
+        Debug.Log("OnInventoryChange");
+        for (int i = 0; i < inventory.GetSlotsLength(); ++i)
+        {
+            Debug.Log("for inventory");
+            if (i >= inventorySlots.Length) return;
+
+            if (selectImage == null || inventorySlots[i] == null) return;
+
+            var image = inventorySlots[i].GetComponentInChildren<Image>();
+            image.sprite = inventory.GetItemIcon(i);
+            if (image.sprite != null) Debug.Log("!null icon");
+
+            MakeImageVisible(image);
+        }
+    }
+
     public void OnItemSelect(int index)
     {
         if (index < 0 || index >= inventorySlots.Length) return;

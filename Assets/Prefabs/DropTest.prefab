@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 8756085118890747420}
   - component: {fileID: 2311404648409743571}
-  - component: {fileID: 4962959783842267404}
   - component: {fileID: -8354911894017587482}
+  - component: {fileID: 5236227527005481629}
   m_Layer: 0
   m_Name: DropTest
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -86,24 +86,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &4962959783842267404
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3108244455157730178}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73cbd45fa19237d4795b3e4cd2c4de39, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dispawnTime: 100
-  timeToActivate: 2
-  moveSpeed: 1
-  stopDistance: 0.5
-  inventoryItemPrefab: {fileID: 4487259141457636443, guid: a87a84c3da7f7d24eabb911f86d04e5b,
-    type: 3}
 --- !u!58 &-8354911894017587482
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -139,3 +121,21 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 1
+--- !u!114 &5236227527005481629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3108244455157730178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0a3681c639c945499caaa7faff8405c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  item: {fileID: 11400000, guid: fac63d750c75fd84c9934be8e4eec500, type: 2}
+  dispawnTime: 100
+  timeToActivate: 2
+  moveSpeed: 1
+  stopDistance: 0.5
+  inventoryItemPrefab: {fileID: 0}

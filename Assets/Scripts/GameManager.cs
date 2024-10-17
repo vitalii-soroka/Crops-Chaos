@@ -26,7 +26,6 @@ public class GameManager : MonoBehaviour
         var item = Instantiate(itemPrefab);
 
         inventory.AddItem(item);
-
     }
 
     public void AddCoins(int amount)

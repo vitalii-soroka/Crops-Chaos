@@ -8,7 +8,6 @@ public class TileAdaptation : MonoBehaviour
 {
     TileMapWrapper tilemap;
     
-
     void Start()
     {
         tilemap = GetComponent<TileMapWrapper>();
@@ -83,7 +82,6 @@ public class TileAdaptation : MonoBehaviour
         if (!hasAbove && hasBelow && !hasRight && !hasLeft) return 15;
         if (hasAbove && hasBelow && !hasRight && !hasLeft) return 16;
         if (hasAbove && !hasBelow && !hasRight && !hasLeft) return 17;
-
 
         // Default sprite
         return 11;

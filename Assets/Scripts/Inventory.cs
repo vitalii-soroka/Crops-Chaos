@@ -96,8 +96,6 @@ public class Inventory : MonoBehaviour
         {
             if (slot.item == newItem && !slot.IsFull())
             {
-                
-
                 int spaceLeft = newItem.maxStack - slot.quantity;
                 int addedAmount = Mathf.Min(amount, spaceLeft);
                 slot.quantity += addedAmount;

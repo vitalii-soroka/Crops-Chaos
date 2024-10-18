@@ -8,14 +8,16 @@ public class InvenoryUI : MonoBehaviour
 {
     [SerializeField] public Inventory inventory;
     [SerializeField] public GameObject selectImage;
-    [SerializeField] public GameObject[] inventorySlots;
+    //[SerializeField] public GameObject[] inventorySlots;
+
+    [SerializeField] public InventorySlotUI[] inventorySlots;
 
     void Start()
     {
         if (inventory != null)
         {
             inventory.onSelect.AddListener(OnItemSelect);
-            inventory.onItemAdd.AddListener(OnSlotChanged);
+            //inventory.onItemAdd.AddListener(OnSlotChanged);
 
             inventory.onInventoryChanged.AddListener(OnInventoryChange);
         }
@@ -36,11 +38,19 @@ public class InvenoryUI : MonoBehaviour
 
             if (selectImage == null || inventorySlots[i] == null) return;
 
-            var image = inventorySlots[i].GetComponentInChildren<Image>();
-            image.sprite = inventory.GetItemIcon(i);
-            if (image.sprite != null) Debug.Log("!null icon");
+            inventorySlots[i].SetItemImage(inventory.GetItemIcon(i));
+            inventorySlots[i].MakeItemImageVisible();
 
-            MakeImageVisible(image);
+            //if (inventorySlots[i].TryGetComponent<Image>(out var image))
+            //{
+            //    ;
+            //    image.sprite = ;
+            //    
+            //}
+
+            // TODO
+
+            inventorySlots[i].SetItemImage(inventory.GetItemIcon(i));
         }
     }
 
@@ -51,20 +61,20 @@ public class InvenoryUI : MonoBehaviour
 
         selectImage.transform.position = inventorySlots[index].transform.position;
     }
-    public void OnSlotChanged(Sprite itemSprite, int index)
-    {
-        Debug.Log("OnSlot");
+    //public void OnSlotChanged(Sprite itemSprite, int index)
+    //{
+    //    Debug.Log("OnSlot");
 
-        if (index < 0 || index >= inventorySlots.Length) return;
-        if (selectImage == null || inventorySlots[index] == null) return;
+    //    if (index < 0 || index >= inventorySlots.Length) return;
+    //    if (selectImage == null || inventorySlots[index] == null) return;
 
 
-        var image = inventorySlots[index].GetComponentInChildren<Image>();
-        image.sprite = itemSprite;
+    //    var image = inventorySlots[index].GetComponentInChildren<Image>();
+    //    image.sprite = itemSprite;
 
-        MakeImageVisible(image);
+    //    MakeImageVisible(image);
 
-    }
+    //}
 
     public void MakeImageInvisible(Image image)
     {
@@ -73,7 +83,6 @@ public class InvenoryUI : MonoBehaviour
         image.color = tempColor;
     }
 
-    // Make the image visible again
     public void MakeImageVisible(Image image)
     {
         Color tempColor = image.color;

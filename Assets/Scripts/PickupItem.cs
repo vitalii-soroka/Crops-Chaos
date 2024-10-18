@@ -73,9 +73,11 @@ public class PickupItem : MonoBehaviour
                     manager.AddCoins(1);
                 }*/
 
-                if (playerInventory != null) playerInventory.AddItem(item);
-
-                Despawn();
+                if (playerInventory != null)
+                {
+                    playerInventory.AddItem(item);
+                    Despawn();
+                }
             }
         }
     }

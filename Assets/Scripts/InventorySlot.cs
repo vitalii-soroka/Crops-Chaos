@@ -10,6 +10,12 @@ public class InventorySlot
 
     public GameObject itemPrefab; 
 
+
+    public int GetQuantity()
+    {
+        return quantity;
+    }
+
     public bool IsFull()
     {
         return quantity >= item.maxStack;

@@ -57,9 +57,9 @@ public class DroppedItem : MonoBehaviour
                 {
                     Debug.Log("GameManager");
 
-                    manager.AddItemToInventory(inventoryItemPrefab);
+                    //manager.AddItemToInventory(inventoryItemPrefab);
 
-                    manager.AddItemToInventory(this.gameObject);
+                    //manager.AddItemToInventory(this.gameObject);
 
 
                     manager.AddCoins(1);

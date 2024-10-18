@@ -10,7 +10,6 @@ public class InventorySlotUI : MonoBehaviour
     [SerializeField] private Image baseImage;
     [SerializeField] private Image itemImage;
 
-
     public void Start()
     {
         if (baseImage == null && gameObject.TryGetComponent<Image>(out var imageComponent))
@@ -23,6 +22,7 @@ public class InventorySlotUI : MonoBehaviour
     {
         amountText.text = number.ToString();
     }
+
     public void SetItemImage(Sprite sprite)
     {
         if (itemImage != null && sprite != null)
@@ -30,6 +30,7 @@ public class InventorySlotUI : MonoBehaviour
             itemImage.sprite = sprite;
         }
     }
+
     public void SetItemImage(Image newImage)
     {
         if (newImage != null)

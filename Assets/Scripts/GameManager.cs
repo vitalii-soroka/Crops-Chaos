@@ -19,15 +19,6 @@ public class GameManager : MonoBehaviour
         AddCoins(coins);
     }
 
-    public void AddItemToInventory(GameObject itemPrefab)
-    {
-        if (itemPrefab == null || inventory == null) return;
-
-        var item = Instantiate(itemPrefab);
-
-        inventory.AddItem(item);
-    }
-
     public void AddCoins(int amount)
     {
         if (amount > 0)

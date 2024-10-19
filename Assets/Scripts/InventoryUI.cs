@@ -36,6 +36,7 @@ public class InventoryUI : MonoBehaviour
         Debug.Log("OnInventoryChange");
 
         Debug.Log(inventory == null);
+
         if (inventory == null) return;
 
         for (int i = 0; i < inventory.GetSlotsLength(); ++i)

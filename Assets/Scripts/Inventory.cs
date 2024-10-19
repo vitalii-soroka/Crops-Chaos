@@ -87,19 +87,18 @@ public class Inventory : MonoBehaviour
         // TODO recheck this
         if (amount > 0)
         {
-            foreach (var slot in slots)
+            for (int i = 0; i < slots.Count; ++i)
             {
-                if (slot.IsEmpty())
+                if (slots[i].IsEmpty())
                 {
-                    slot.quantity = amount;
-                    slot.item = newItem;
+                    slots[i].quantity = amount;
+                    slots[i].item = newItem;
+                    //InventorySlot newSlot = new InventorySlot { item = newItem, quantity = amount };
+                    //slots.Add(newSlot);
                     break;
                 }
-                //InventorySlot newSlot = new InventorySlot { item = newItem, quantity = amount };
-                //slots.Add(newSlot);
             }
         }
-        
         InventoryChanged.Invoke();
     }
 
@@ -110,7 +109,7 @@ public class Inventory : MonoBehaviour
 
     public Sprite GetItemIcon(int index)
     {
-        return slots.Count > index ? slots[index].item.icon : null;
+        return slots.Count > index ? slots[index].item != null ? slots[index].item.icon : null : null;
     }
 
     public int GetQuantity(int index)

@@ -20026,11 +20026,23 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2311404648409743571, guid: cf6d53a815643db429dcbe3c88e59341,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1696890966, guid: 12ddfb2bec7348741bc097aa1722a66e,
+        type: 3}
     - target: {fileID: 3108244455157730178, guid: cf6d53a815643db429dcbe3c88e59341,
         type: 3}
       propertyPath: m_Name
       value: ItemTest (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5236227527005481629, guid: cf6d53a815643db429dcbe3c88e59341,
+        type: 3}
+      propertyPath: item
+      value: 
+      objectReference: {fileID: 11400000, guid: 72ed472e9e82c5a40ad251d1b310c7d2,
+        type: 2}
     - target: {fileID: 8756085118890747420, guid: cf6d53a815643db429dcbe3c88e59341,
         type: 3}
       propertyPath: m_LocalPosition.x

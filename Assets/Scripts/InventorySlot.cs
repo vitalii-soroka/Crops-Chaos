@@ -10,6 +10,17 @@ public class InventorySlot
 
     public GameObject itemPrefab; 
 
+    public InventorySlot()
+    {
+        item = null;
+        quantity = 0;
+        itemPrefab = null;
+    }
+
+    public bool HasItemType(Item other)
+    {
+        return item != null && other != null && item.Equals(other);
+    }
 
     public int GetQuantity()
     {
@@ -18,6 +29,11 @@ public class InventorySlot
 
     public bool IsFull()
     {
-        return quantity >= item.maxStack;
+        return item != null ? quantity >= item.maxStack : false;
+    }
+
+    public bool IsEmpty()
+    {
+        return item == null;
     }
 }

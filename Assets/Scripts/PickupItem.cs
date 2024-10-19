@@ -106,4 +106,9 @@ public class PickupItem : MonoBehaviour
     {
         Destroy(gameObject);
     }
+
+    public Item GetInventoryType()
+    {
+        return item;
+    }
 }

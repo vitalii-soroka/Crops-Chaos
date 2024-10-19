@@ -20,8 +20,8 @@ public class InventoryUI : MonoBehaviour
         // Subscribe to the inventory events
         if (inventory != null)
         {
-            inventory.onSelect.AddListener(OnItemSelect);
-            inventory.onInventoryChanged.AddListener(OnInventoryChange);
+            inventory.ItemSelected.AddListener(OnItemSelect);
+            inventory.InventoryChanged.AddListener(OnInventoryChange);
         }
 
         // Setting Select Overlay Image
@@ -34,6 +34,10 @@ public class InventoryUI : MonoBehaviour
     private void OnInventoryChange()
     {
         Debug.Log("OnInventoryChange");
+
+        Debug.Log(inventory == null);
+        if (inventory == null) return;
+
         for (int i = 0; i < inventory.GetSlotsLength(); ++i)
         {
             if (i >= inventorySlotsUI.Length || inventorySlotsUI[i] == null) return;

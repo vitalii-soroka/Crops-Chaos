@@ -7,23 +7,24 @@ using UnityEngine.Events;
 
 public class Inventory : MonoBehaviour
 {
-    [SerializeField] private List<InventorySlot> slotsl;
+    [SerializeField] private List<InventorySlot> slots;
+    [SerializeField] private int maxSlots = 3;
 
     [SerializeField] private int currentIndex = 0;
-    [SerializeField] private int slots = 3;
 
-    public UnityEvent<int> onSelect;
-    public UnityEvent onInventoryChanged;
-
-    //public UnityEvent<Sprite, int> onItemAdd;
-
-    //public GameObject[] items;
-
-    public int MaxSlots = 3;
+    public UnityEvent<int> ItemSelected;
+    public UnityEvent InventoryChanged;
 
     void Start()
     {
-        slotsl = new List<InventorySlot>();
+        slots = new List<InventorySlot>();
+
+        for(int i = 0; i < maxSlots; ++i)
+        {
+            slots.Add(new InventorySlot());
+        }
+
+        Debug.Log(slots.Count);
     }
 
     void Update()
@@ -33,25 +34,36 @@ public class Inventory : MonoBehaviour
         if (scroll != 0)
         {
             currentIndex = CalculateIndex(currentIndex, scroll > 0 ? -1 : 1);
-            onSelect.Invoke(currentIndex);
+            ItemSelected.Invoke(currentIndex);
         }
     }
 
     private int CalculateIndex(int value, int change)
     {
-        return (value + change + slots) % slots;
+        if(slots.Count == 0) return -1;
+
+        return (value + change + slots.Count) % slots.Count;
     }
 
-    // TODO just PickUp mechanic
 
+    // TODO just PickUp mechanic
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision != null && collision.CompareTag(StaticTags.Item))
         {
             if (collision.TryGetComponent<PickupItem>(out var pickup))
             {
-                pickup.SetTarget(this.transform);
-                pickup.SetInventory(this);
+                foreach (var slot in slots)
+                {
+                    bool hasItem = !slot.IsFull() && slot.HasItemType(pickup.GetInventoryType());
+
+                    if (hasItem || slot.IsEmpty())
+                    {
+                        pickup.SetTarget(this.transform);
+                        pickup.SetInventory(this);
+                        return;
+                    }
+                }
             }
         }
     }
@@ -59,9 +71,9 @@ public class Inventory : MonoBehaviour
     // TODO
     public void AddItem(Item newItem, int amount = 1)
     {
-        foreach (var slot in slotsl)
+        foreach (var slot in slots)
         {
-            if (slot.item.Equals(newItem) && !slot.IsFull())
+            if (slot.HasItemType(newItem) && !slot.IsFull())
             {
                 int spaceLeft = newItem.maxStack - slot.quantity;
 
@@ -72,28 +84,51 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        if (amount > 0 && slotsl.Count < MaxSlots)
+        // TODO recheck this
+        if (amount > 0)
         {
-            InventorySlot newSlot = new InventorySlot { item = newItem, quantity = amount };
-            slotsl.Add(newSlot);
-            Debug.Log(slotsl.Count);
+            foreach (var slot in slots)
+            {
+                if (slot.IsEmpty())
+                {
+                    slot.quantity = amount;
+                    slot.item = newItem;
+                    break;
+                }
+                //InventorySlot newSlot = new InventorySlot { item = newItem, quantity = amount };
+                //slots.Add(newSlot);
+            }
         }
-
-        onInventoryChanged.Invoke();
+        
+        InventoryChanged.Invoke();
     }
 
     public int GetSlotsLength()
     {
-        return slotsl.Count;
+        return slots.Count;
     }
 
     public Sprite GetItemIcon(int index)
     {
-        return slotsl.Count > index ? slotsl[index].item.icon : null;
+        return slots.Count > index ? slots[index].item.icon : null;
     }
 
     public int GetQuantity(int index)
     {
-        return slotsl.Count > index ? slotsl[index].GetQuantity() : 0;
+        return slots.Count > index ? slots[index].GetQuantity() : 0;
     }
+
+    public bool IsFull()
+    {
+        foreach(var slot in slots)
+        {
+            if (!slot.IsFull())
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }

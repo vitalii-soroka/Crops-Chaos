@@ -19,12 +19,10 @@ public class Inventory : MonoBehaviour
     {
         slots = new List<InventorySlot>();
 
-        for(int i = 0; i < maxSlots; ++i)
+        for (int i = 0; i < maxSlots; ++i)
         {
             slots.Add(new InventorySlot());
         }
-
-        Debug.Log(slots.Count);
     }
 
     void Update()
@@ -40,7 +38,7 @@ public class Inventory : MonoBehaviour
 
     private int CalculateIndex(int value, int change)
     {
-        if(slots.Count == 0) return -1;
+        if (slots.Count == 0) return -1;
 
         return (value + change + slots.Count) % slots.Count;
     }
@@ -71,6 +69,7 @@ public class Inventory : MonoBehaviour
     // TODO
     public void AddItem(Item newItem, int amount = 1)
     {
+        // fill others slots
         foreach (var slot in slots)
         {
             if (slot.HasItemType(newItem) && !slot.IsFull())
@@ -84,7 +83,7 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        // TODO recheck this
+        // add to other slot
         if (amount > 0)
         {
             for (int i = 0; i < slots.Count; ++i)
@@ -93,23 +92,28 @@ public class Inventory : MonoBehaviour
                 {
                     slots[i].quantity = amount;
                     slots[i].item = newItem;
-                    //InventorySlot newSlot = new InventorySlot { item = newItem, quantity = amount };
-                    //slots.Add(newSlot);
+
                     break;
                 }
             }
         }
+
         InventoryChanged.Invoke();
     }
 
-    public int GetSlotsLength()
+    public int GetSlotsCount()
     {
         return slots.Count;
     }
 
     public Sprite GetItemIcon(int index)
     {
-        return slots.Count > index ? slots[index].item != null ? slots[index].item.icon : null : null;
+        if (index < 0 || slots.Count < index || slots[index].item == null) 
+            return null;
+
+        return slots[index].item.icon;
+
+        //return slots.Count > index ? slots[index].item != null ? slots[index].item.icon : null : null;
     }
 
     public int GetQuantity(int index)
@@ -128,6 +132,17 @@ public class Inventory : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void Drop()
+    {
+        Debug.Log("Drop");
+        if (slots[currentIndex].IsEmpty()) return;
+
+        Instantiate(slots[currentIndex].item.itemPrefab);
+        slots[currentIndex].RemoveItem();
+
+        InventoryChanged.Invoke();
     }
 
 }

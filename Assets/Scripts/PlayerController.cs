@@ -28,8 +28,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] TriggerChecker mediumTrigger;
     [SerializeField] TriggerChecker bigTrigger;
 
-
     [SerializeField] TileField field;
+
+
+    Inventory inventory;
 
     private void Start()
     {
@@ -38,6 +40,9 @@ public class PlayerController : MonoBehaviour
 
         // TO EDIT
         if(smallTrigger == null) smallTrigger = GetComponentInChildren<TriggerChecker>();
+
+
+        if (inventory == null) inventory = GetComponentInChildren<Inventory>();
     }
 
     void FieldInteraction()
@@ -86,6 +91,10 @@ public class PlayerController : MonoBehaviour
         {
             if (buildShop.gameObject.activeSelf) buildShop.SetActive(false);
             else if (!buildShop.gameObject.activeSelf) buildShop.SetActive(true);
+        }
+        if (Input.GetKeyDown(KeyCode.Q) && inventory != null)
+        {
+            inventory.Drop();
         }
     }
 

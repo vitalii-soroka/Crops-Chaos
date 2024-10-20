@@ -39,17 +39,21 @@ public class InventoryUI : MonoBehaviour
 
         if (inventory == null) return;
 
-        for (int i = 0; i < inventory.GetSlotsLength(); ++i)
+        for (int i = 0; i < inventory.GetSlotsCount(); ++i)
         {
             if (i >= inventorySlotsUI.Length || inventorySlotsUI[i] == null) return;
 
             var itemImage = inventory.GetItemIcon(i);
             if (itemImage != null)
             {
-                inventorySlotsUI[i].SetItemImage(itemImage);
+                inventorySlotsUI[i].ShowItemImage(itemImage);
                 inventorySlotsUI[i].SetAmount(inventory.GetQuantity(i));
 
-                inventorySlotsUI[i].MakeItemImageVisible();
+               
+            }
+            else
+            {
+                inventorySlotsUI[i].HideItemImage();
             }
         }
     }

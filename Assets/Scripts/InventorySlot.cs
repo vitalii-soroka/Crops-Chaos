@@ -8,13 +8,31 @@ public class InventorySlot
     public Item item;
     public int quantity; 
 
-    public GameObject itemPrefab; 
+    //public GameObject itemPrefab; 
 
     public InventorySlot()
     {
         item = null;
         quantity = 0;
-        itemPrefab = null;
+        //itemPrefab = null;
+    }
+
+    // Remove Later?
+    public void SetItem(Item other, int amount = 1)
+    {
+        item.itemName = other.itemName;
+        item.maxStack = other.maxStack;
+        item.icon = other.icon;
+        item.itemPrefab = other.itemPrefab;
+
+        quantity = amount;  
+    }
+
+    public void RemoveItem()
+    {
+        item = null;
+        quantity = 0;
+        //itemPrefab = null;
     }
 
     public bool HasItemType(Item other)

@@ -16,3 +16,5 @@ MonoBehaviour:
   maxStack: 5
   icon: {fileID: 1696890966, guid: 12ddfb2bec7348741bc097aa1722a66e, type: 3}
   itemPrefab: {fileID: 0}
+  cropPrefab: {fileID: 0}
+  type: 0

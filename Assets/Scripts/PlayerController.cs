@@ -30,7 +30,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] TileField field;
 
-
     Inventory inventory;
 
     private void Start()
@@ -65,16 +64,27 @@ public class PlayerController : MonoBehaviour
 
     void FieldTileInteraction()
     {
+        if (field == null) return;
+
         if (field.IsField(transform.position))
         {
             if (field.HasCrop(transform.position))
             {
                 field.Gather(transform.position);
+                return;
             }
-            else
+
+            if (inventory != null)
             {
-                field.Plant(transform.position, cropPrefabTest);
+                var selectedItem = inventory.GetSelectedItem();
+                if (selectedItem != null && selectedItem.type == Item.ItemType.Seed)
+                {
+                    var crop = ((SeedItem)selectedItem).cropPrefab;
+                    field.Plant(transform.position, crop);
+                    inventory.SubstructItem();
+                }
             }
+           
         }
     }
 
@@ -89,8 +99,7 @@ public class PlayerController : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.J) && buildShop != null)
         {
-            if (buildShop.gameObject.activeSelf) buildShop.SetActive(false);
-            else if (!buildShop.gameObject.activeSelf) buildShop.SetActive(true);
+            buildShop.SetActive(!buildShop.activeSelf);
         }
         if (Input.GetKeyDown(KeyCode.Q) && inventory != null)
         {

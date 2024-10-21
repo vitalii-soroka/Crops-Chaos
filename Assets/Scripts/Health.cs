@@ -26,7 +26,7 @@ public class Health : MonoBehaviour
 
     public void Start()
     {
-        Transform canvas = GameObject.Find("MainUI")?.transform;
+        Transform canvas = GameObject.Find("MainUI").transform;
         if (canvas != null)
         {
             healthBar = Instantiate(healthBarPrefab);

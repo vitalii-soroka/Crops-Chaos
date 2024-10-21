@@ -28,7 +28,7 @@ public class InventorySlot
         quantity = amount;  
     }
 
-    public void DropItem()
+    public void SubstructItem()
     {
         if (item == null || quantity == 0) return;
 

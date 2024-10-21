@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
 {
     [SerializeField] private Inventory inventory;
-    [SerializeField] private GameObject selectImage;
+    [SerializeField] private GameObject selectImage; // Better to place on 0 slot place from inspector because of the bug
 
     [SerializeField] private InventorySlotUI[] inventorySlotsUI;
 
@@ -22,12 +23,6 @@ public class InventoryUI : MonoBehaviour
         {
             inventory.ItemSelected.AddListener(OnItemSelect);
             inventory.InventoryChanged.AddListener(OnInventoryChange);
-        }
-
-        // Setting Select Overlay Image
-        if (selectImage != null && inventorySlotsUI.Length > 0)
-        {
-            selectImage.transform.position = inventorySlotsUI[0].transform.position;
         }
     }
 

@@ -23,8 +23,6 @@ public class Inventory : MonoBehaviour
         {
             slots.Add(new InventorySlot());
         }
-
-        ItemSelected.Invoke(currentIndex);
     }
 
     void Update()
@@ -38,6 +36,10 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    public Item GetSelectedItem()
+    {
+        return slots[currentIndex].item;
+    }
     private int CalculateIndex(int value, int change)
     {
         if (slots.Count == 0) return -1;
@@ -60,7 +62,7 @@ public class Inventory : MonoBehaviour
     {
         foreach (var slot in slots)
         {
-            bool hasItem = !slot.IsFull() && slot.HasItemType(pickup.GetInventoryType());
+            bool hasItem = !slot.IsFull() && slot.HasItemType(pickup.GetInventoryItem());
 
             if (hasItem || slot.IsEmpty())
             {
@@ -75,7 +77,7 @@ public class Inventory : MonoBehaviour
     {
         foreach (var slot in slots)
         {
-            bool hasItem = !slot.IsFull() && slot.HasItemType(pickup.GetInventoryType());
+            bool hasItem = !slot.IsFull() && slot.HasItemType(pickup.GetInventoryItem());
 
             if (hasItem || slot.IsEmpty())
             {
@@ -153,6 +155,12 @@ public class Inventory : MonoBehaviour
         return true;
     }
 
+    public void SubstructItem()
+    {
+        slots[currentIndex].SubstructItem();
+        InventoryChanged.Invoke();
+    }
+
     public void Drop()
     {
         Debug.Log("Drop");
@@ -164,7 +172,7 @@ public class Inventory : MonoBehaviour
         var dropped = Instantiate(slots[currentIndex].item.itemPrefab);
         dropped.transform.position = transform.position;
         
-        slots[currentIndex].DropItem();
+        slots[currentIndex].SubstructItem();
 
         InventoryChanged.Invoke();
     }

@@ -67,6 +67,8 @@ public class TileField : MonoBehaviour
 
     public void Plant(Vector3 worldPosition,  GameObject cropPrefab)
     {
+        if (cropPrefab == null) return;
+
         Vector3Int tilePos = tileMap.WorldToCell(worldPosition);
         Plant(tilePos, cropPrefab);
     }

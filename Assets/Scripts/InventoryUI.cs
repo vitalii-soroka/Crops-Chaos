@@ -35,8 +35,6 @@ public class InventoryUI : MonoBehaviour
     {
         Debug.Log("OnInventoryChange");
 
-        Debug.Log(inventory == null);
-
         if (inventory == null) return;
 
         for (int i = 0; i < inventory.GetSlotsCount(); ++i)
@@ -47,14 +45,13 @@ public class InventoryUI : MonoBehaviour
             if (itemImage != null)
             {
                 inventorySlotsUI[i].ShowItemImage(itemImage);
-                inventorySlotsUI[i].SetAmount(inventory.GetQuantity(i));
-
-               
             }
             else
             {
                 inventorySlotsUI[i].HideItemImage();
             }
+
+            inventorySlotsUI[i].SetAmount(inventory.GetQuantity(i));
         }
     }
 

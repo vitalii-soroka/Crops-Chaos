@@ -28,11 +28,17 @@ public class InventorySlot
         quantity = amount;  
     }
 
-    public void RemoveItem()
+    public void DropItem()
     {
-        item = null;
-        quantity = 0;
-        //itemPrefab = null;
+        if (item == null || quantity == 0) return;
+
+        --quantity;
+        
+        if (quantity < 1)
+        {
+            item = null;
+            quantity = 0;
+        }
     }
 
     public bool HasItemType(Item other)

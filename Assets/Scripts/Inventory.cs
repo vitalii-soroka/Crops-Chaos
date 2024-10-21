@@ -23,6 +23,8 @@ public class Inventory : MonoBehaviour
         {
             slots.Add(new InventorySlot());
         }
+
+        ItemSelected.Invoke(currentIndex);
     }
 
     void Update()
@@ -43,27 +45,44 @@ public class Inventory : MonoBehaviour
         return (value + change + slots.Count) % slots.Count;
     }
 
-
     // TODO just PickUp mechanic
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision != null && collision.CompareTag(StaticTags.Item))
-        {
-            if (collision.TryGetComponent<PickupItem>(out var pickup))
-            {
-                foreach (var slot in slots)
-                {
-                    bool hasItem = !slot.IsFull() && slot.HasItemType(pickup.GetInventoryType());
+        if (collision == null || !collision.CompareTag(StaticTags.Item)) return;
 
-                    if (hasItem || slot.IsEmpty())
-                    {
-                        pickup.SetTarget(this.transform);
-                        pickup.SetInventory(this);
-                        return;
-                    }
-                }
+        if (collision.TryGetComponent<PickupItem>(out var pickup))
+        {
+            TrySetPickup(pickup);
+        }
+    }
+
+    private void TrySetPickup(PickupItem pickup)
+    {
+        foreach (var slot in slots)
+        {
+            bool hasItem = !slot.IsFull() && slot.HasItemType(pickup.GetInventoryType());
+
+            if (hasItem || slot.IsEmpty())
+            {
+                pickup.SetTarget(transform);
+                pickup.SetInventory(this);
+                return;
             }
         }
+    }
+
+    public bool CanPickup(PickupItem pickup)
+    {
+        foreach (var slot in slots)
+        {
+            bool hasItem = !slot.IsFull() && slot.HasItemType(pickup.GetInventoryType());
+
+            if (hasItem || slot.IsEmpty())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     // TODO
@@ -139,8 +158,13 @@ public class Inventory : MonoBehaviour
         Debug.Log("Drop");
         if (slots[currentIndex].IsEmpty()) return;
 
-        Instantiate(slots[currentIndex].item.itemPrefab);
-        slots[currentIndex].RemoveItem();
+        if (slots[currentIndex].item == null || slots[currentIndex].item.itemPrefab == null) return;
+
+        // TEMP
+        var dropped = Instantiate(slots[currentIndex].item.itemPrefab);
+        dropped.transform.position = transform.position;
+        
+        slots[currentIndex].DropItem();
 
         InventoryChanged.Invoke();
     }

@@ -58,26 +58,19 @@ public class PickupItem : MonoBehaviour
 
                 transform.position = newPosition;
             }
-            else
+            else if (playerInventory != null)
             {
-                // TEMP
-                /*var managerObject = GameObject.Find("GameManager");
-                if (managerObject && managerObject.TryGetComponent<GameManager>(out var manager))
-                {
-                    Debug.Log("GameManager");
-
-                    //manager.AddItemToInventory(inventoryItemPrefab);
-
-                    //manager.AddItemToInventory(this.gameObject);
-
-                    manager.AddCoins(1);
-                }*/
-
-                if (playerInventory != null)
+                if (playerInventory.CanPickup(this))
                 {
                     playerInventory.AddItem(item);
                     Despawn();
                 }
+                else
+                {
+                    // TODO 
+                    moveTo = null;
+                }
+                
             }
         }
     }

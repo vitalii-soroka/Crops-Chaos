@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Tilemaps;
 using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.Events;
+using static UnityEditor.Progress;
 
 public class Inventory : MonoBehaviour
 {
@@ -54,12 +56,33 @@ public class Inventory : MonoBehaviour
 
         if (collision.TryGetComponent<PickupItem>(out var pickup))
         {
-            TrySetPickup(pickup);
+            pickup.ReadyPickup.AddListener(OnItemReadyToPickup);
         }
+    }
+
+    private void OnItemApproach(PickupItem pickItem)
+    {        
+        Debug.Log("IOnItemApproach");
+
+        if (CanPickup(pickItem))
+        {
+           AddItem(pickItem.GetInventoryItem());
+        }
+    }
+
+    private void OnItemReadyToPickup(PickupItem pickup)
+    {
+        Debug.Log("IOnItemReadyToPickup");
+
+        TrySetPickup(pickup);
+        pickup.ItemApproach.AddListener(OnItemApproach);
+        
     }
 
     private void TrySetPickup(PickupItem pickup)
     {
+        // TODO : currently item remember to be picked should we leave this behaviour?
+
         foreach (var slot in slots)
         {
             bool hasItem = !slot.IsFull() && slot.HasItemType(pickup.GetInventoryItem());
@@ -163,7 +186,7 @@ public class Inventory : MonoBehaviour
 
     public void Drop()
     {
-        Debug.Log("Drop");
+        //Debug.Log("Drop");
         if (slots[currentIndex].IsEmpty()) return;
 
         if (slots[currentIndex].item == null || slots[currentIndex].item.itemPrefab == null) return;

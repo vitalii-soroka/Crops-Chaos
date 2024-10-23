@@ -8,6 +8,7 @@ TagManager:
   - Field
   - Drop
   - Item
+  - Crop
   layers:
   - Default
   - TransparentFX

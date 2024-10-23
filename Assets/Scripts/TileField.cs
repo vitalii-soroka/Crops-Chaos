@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
 
 public class TileField : MonoBehaviour
@@ -9,13 +10,22 @@ public class TileField : MonoBehaviour
     
     private Dictionary<Vector3Int, GameObject> crops;
     private TileMapWrapper tileMap;
+
+    //[SerializeField] public Tilemap ground;
     
     void Start()
     {
         tileMap = GetComponent<TileMapWrapper>();
         crops = new Dictionary<Vector3Int, GameObject>();
     }
-    
+
+    public void Dig(Vector3 position)
+    {
+        if (tileMap == null) return;
+
+        tileMap.SetTileNotify(tileMap.WorldToCell(position));
+    }
+
     private void Plant(Vector3Int position, GameObject cropPrefab)
     {
         if (cropPrefab == null || crops.ContainsKey(position)) return;

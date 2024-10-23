@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -22,13 +23,15 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
 
     // TO EDIT FOR USING ITEM FROM INVENTORY LIKE SEEDS
-    [SerializeField] GameObject cropPrefabTest;
+    //[SerializeField] GameObject cropPrefabTest;
     
     [SerializeField] TriggerChecker smallTrigger;
     [SerializeField] TriggerChecker mediumTrigger;
     [SerializeField] TriggerChecker bigTrigger;
 
-    [SerializeField] TileField field;
+    //[SerializeField] TileField field;
+
+    [SerializeField] GameActionsManager gameManager;
 
     Inventory inventory;
 
@@ -44,33 +47,48 @@ public class PlayerController : MonoBehaviour
         if (inventory == null) inventory = GetComponentInChildren<Inventory>();
     }
 
-    void FieldInteraction()
+    //void FieldTileInteraction()
+    //{
+    //    if (field == null) return;
+
+    //    if (field.IsField(transform.position))
+    //    {
+    //        if (field.HasCrop(transform.position))
+    //        {
+    //            field.Gather(transform.position);
+    //            return;
+    //        }
+
+    //        if (inventory != null)
+    //        {
+    //            var selectedItem = inventory.GetSelectedItem();
+    //            if (selectedItem != null && selectedItem.type == Item.ItemType.Seed)
+    //            {
+    //                var crop = ((SeedItem)selectedItem).cropPrefab;
+    //                field.Plant(transform.position, crop);
+    //                inventory.SubstructItem();
+    //            }
+    //        }
+
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("Dig");
+    //        if (gameManager != null)
+    //        {
+    //            gameManager.Dig(transform.position);
+    //        }
+    //    }
+    //}
+    void FieldTileInteraction2()
     {
-        if (smallTrigger == null || smallTrigger.trigger == null || cropPrefabTest == null) return;
+        if (gameManager == null) return;
 
-        if (smallTrigger.CheckTrigger("Field") 
-            && smallTrigger.trigger.TryGetComponent<Field>(out var field))
+        if (gameManager.HasField(transform.position))
         {
-            if (field.HasCrop())
+            if (gameManager.HasCrop(transform.position))
             {
-                field.Gather();
-            }
-            else
-            {
-                field.Plant(cropPrefabTest);
-            }
-        }
-    }
-
-    void FieldTileInteraction()
-    {
-        if (field == null) return;
-
-        if (field.IsField(transform.position))
-        {
-            if (field.HasCrop(transform.position))
-            {
-                field.Gather(transform.position);
+                gameManager.GatherCrop(transform.position);
                 return;
             }
 
@@ -80,11 +98,14 @@ public class PlayerController : MonoBehaviour
                 if (selectedItem != null && selectedItem.type == Item.ItemType.Seed)
                 {
                     var crop = ((SeedItem)selectedItem).cropPrefab;
-                    field.Plant(transform.position, crop);
+                    gameManager.PlantCrop(transform.position, crop);
                     inventory.SubstructItem();
                 }
             }
-           
+        }
+        else
+        {
+            gameManager.Dig(transform.position);
         }
     }
 
@@ -92,9 +113,9 @@ public class PlayerController : MonoBehaviour
     {
         UpdateAxis();
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(1))
         {
-            FieldTileInteraction();
+            FieldTileInteraction2();
             //else Attack();
         }
         if (Input.GetKeyDown(KeyCode.J) && buildShop != null)

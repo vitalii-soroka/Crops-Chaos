@@ -9,6 +9,8 @@ public class Workbench : MonoBehaviour
     // TEMP
     [SerializeField] GameObject seedPrefab;
 
+    //[SerializeField] 
+
     void Start()
     {
         triggerCollider = GetComponent<Collider2D>();
@@ -22,11 +24,17 @@ public class Workbench : MonoBehaviour
         {
             if (pickup.GetInventoryType() == Item.ItemType.Crop)
             {
-                Destroy(pickup.gameObject);
-                var inst = Instantiate(seedPrefab);
-                inst.transform.position = transform.position;
+                pickup.SetTarget(this.transform);
+                pickup.ItemApproach.AddListener(OnItemApproach);
             }
         }
+    }
+
+    public void OnItemApproach(PickupItem pickItem)
+    {
+        Debug.Log("OnItemApproach");
+        //var seed = Instantiate(pickItem.GetInventoryItem().itemPrefab);
+        //seed.transform.position = transform.position;
     }
 
 }

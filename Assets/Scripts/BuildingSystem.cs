@@ -39,7 +39,10 @@ public class BuildingSystem : MonoBehaviour
         return menu != null && menu.gameObject.activeSelf;
     }
 
-    private bool IsBuildingSelected() { return menu.GetSelectedBuilding() != null; }
+    private bool IsBuildingSelected() 
+    { 
+        return menu.GetSelectedBuilding() != null; 
+    }
 
     void UpdatePreviewUI()
     {
@@ -149,6 +152,8 @@ public class BuildingSystem : MonoBehaviour
                 );
             Vector2 boxCenter = lastPreviewPosition;
 
+
+            // TODO add layer mask
             Collider2D hitCollider = Physics2D.OverlapBox(boxCenter, boxSize, 0f);
             if (hitCollider != null)
             {

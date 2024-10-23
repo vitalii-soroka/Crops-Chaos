@@ -28,7 +28,7 @@ public class InventoryUI : MonoBehaviour
 
     private void OnInventoryChange()
     {
-        Debug.Log("OnInventoryChange");
+        //Debug.Log("OnInventoryChange");
 
         if (inventory == null) return;
 

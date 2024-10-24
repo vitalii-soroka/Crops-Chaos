@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2311404648409743571}
   - component: {fileID: -8354911894017587482}
   - component: {fileID: 5236227527005481629}
-  m_Layer: 0
+  m_Layer: 23
   m_Name: DropTest
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -138,4 +138,11 @@ MonoBehaviour:
   timeToActivate: 2
   moveSpeed: 1
   stopDistance: 0.5
-  inventoryItemPrefab: {fileID: 0}
+  swingSpeed: 2
+  swingAmount: 0.1
+  ReadyPickup:
+    m_PersistentCalls:
+      m_Calls: []
+  ItemApproach:
+    m_PersistentCalls:
+      m_Calls: []

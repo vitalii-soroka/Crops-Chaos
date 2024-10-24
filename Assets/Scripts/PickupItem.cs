@@ -56,6 +56,7 @@ public class PickupItem : MonoBehaviour
 
         ChangeState(PickupItemState.Dropped);
 
+        gameObject.layer = LayerMask.NameToLayer("Pickup");
     }
 
     void FixedUpdate()
@@ -91,7 +92,7 @@ public class PickupItem : MonoBehaviour
 
             else
             {
-                ItemApproach.Invoke(this); moveTo = null;
+                ItemApproach.Invoke(this);
                 ItemApproach.RemoveAllListeners();
                 Despawn();
             }

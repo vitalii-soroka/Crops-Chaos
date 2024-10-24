@@ -38438,6 +38438,11 @@ PrefabInstance:
       propertyPath: triggerCollider
       value: 
       objectReference: {fileID: 754596004}
+    - target: {fileID: 763676759785510987, guid: 55d02c84b860bd445a7304a2c69725b0,
+        type: 3}
+      propertyPath: m_BodyType
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1039827007512655400, guid: 55d02c84b860bd445a7304a2c69725b0,
         type: 3}
       propertyPath: m_Name
@@ -38502,6 +38507,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsTrigger
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7283495324931166077, guid: 55d02c84b860bd445a7304a2c69725b0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 8282688933516917495, guid: 55d02c84b860bd445a7304a2c69725b0,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8282688933516917495, guid: 55d02c84b860bd445a7304a2c69725b0,
+        type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8282688933516917495, guid: 55d02c84b860bd445a7304a2c69725b0,
+        type: 3}
+      propertyPath: m_LayerOverridePriority
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

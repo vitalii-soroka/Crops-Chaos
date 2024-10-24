@@ -24,8 +24,9 @@ public class Workbench : MonoBehaviour
         {
             if (pickup.GetInventoryType() == Item.ItemType.Crop)
             {
+                Debug.Log("WOnTriggerEnter2D");
                 pickup.SetTarget(this.transform);
-                pickup.ItemApproach.AddListener(OnItemApproach);
+                //pickup.ItemApproach.AddListener(OnItemApproach);
             }
         }
     }

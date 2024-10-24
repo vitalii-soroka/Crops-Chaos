@@ -6,10 +6,8 @@ public class Workbench : MonoBehaviour
 {
     [SerializeField] Collider2D triggerCollider;
 
-    // TEMP
-    [SerializeField] GameObject seedPrefab;
-
-    //[SerializeField] 
+    // TEMP RESULT OF DESTRUCTION
+    [SerializeField] GameObject go;
 
     void Start()
     {
@@ -26,7 +24,7 @@ public class Workbench : MonoBehaviour
             {
                 Debug.Log("WOnTriggerEnter2D");
                 pickup.SetTarget(this.transform);
-                //pickup.ItemApproach.AddListener(OnItemApproach);
+                pickup.ItemApproach.AddListener(OnItemApproach);
             }
         }
     }
@@ -34,7 +32,15 @@ public class Workbench : MonoBehaviour
     public void OnItemApproach(PickupItem pickItem)
     {
         Debug.Log("OnItemApproach");
-        //var seed = Instantiate(pickItem.GetInventoryItem().itemPrefab);
+
+        if (go != null)
+        {
+            var prizeObject = Instantiate(go);
+            prizeObject.transform.position = transform.position;
+        }
+
+        //var seedItem = (SeedItem)pickItem.GetInventoryItem();
+        //var seed = Instantiate(seedItem.cropPrefab, transform);
         //seed.transform.position = transform.position;
     }
 

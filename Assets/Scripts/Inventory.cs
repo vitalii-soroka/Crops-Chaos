@@ -56,7 +56,12 @@ public class Inventory : MonoBehaviour
 
         if (collision.TryGetComponent<PickupItem>(out var pickup))
         {
-            pickup.ReadyPickup.AddListener(OnItemReadyToPickup);
+            Debug.Log("OnTriggerEnter2D");
+            if (pickup.state == PickupItem.PickupItemState.Dropped)
+                pickup.ReadyPickup.AddListener(OnItemReadyToPickup);
+
+            else if (pickup.state == PickupItem.PickupItemState.Idle)
+                OnItemReadyToPickup(pickup);
         }
     }
 
@@ -90,7 +95,6 @@ public class Inventory : MonoBehaviour
             if (hasItem || slot.IsEmpty())
             {
                 pickup.SetTarget(transform);
-                pickup.SetInventory(this);
                 return;
             }
         }

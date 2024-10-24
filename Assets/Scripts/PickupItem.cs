@@ -14,7 +14,7 @@ public class PickupItem : MonoBehaviour
         Dragged
     }
 
-    private PickupItemState state;
+    public PickupItemState state;
 
     // Item representation in Inventory
     [SerializeField] private Item item;
@@ -28,22 +28,15 @@ public class PickupItem : MonoBehaviour
     [SerializeField] private float swingAmount = 0.1f; // Amount of rotation (swing)
     private Vector3 startPosition;
 
-
     private float timeDropped = 0.0f;
 
     private Collider2D pickUpCollider;
 
+    [SerializeField]
     private Transform moveTo = null;
-
-    private Inventory playerInventory = null;
 
     public UnityEvent<PickupItem> ReadyPickup;
     public UnityEvent<PickupItem> ItemApproach;
-
-    public void SetInventory(Inventory inventory)
-    {
-        playerInventory = inventory;
-    }
 
     void Start()
     {
@@ -68,18 +61,17 @@ public class PickupItem : MonoBehaviour
             Despawn();
         }
 
-        if (timeDropped > timeToActivate)
+        if (state == PickupItemState.Dropped && timeDropped > timeToActivate)
         {
             ChangeState(PickupItemState.Idle);
-
-            if (moveTo == null) 
-            {
-                ReadyPickup.Invoke(this);
-            }
+            ReadyPickup.Invoke(this);
+            
         }
 
         if (moveTo != null)
         {
+            ChangeState(PickupItemState.Dragged);
+
             Vector3 direction = moveTo.position - transform.position;
             if (direction.magnitude > stopDistance)
             {
@@ -132,6 +124,7 @@ public class PickupItem : MonoBehaviour
         if (moveTo == null && newTarget != null)
         {
             moveTo = newTarget;
+            ChangeState(PickupItemState.Dragged);
         }
     }
 
@@ -161,16 +154,20 @@ public class PickupItem : MonoBehaviour
         {
             case PickupItemState.Idle:
                 state = newState;
-
                 break;
 
             case PickupItemState.Dropped:
+                moveTo = null;
                 state = newState;
                 timeDropped = 0.0f;
+                pickUpCollider.enabled = true;
 
                 break;
+
             case PickupItemState.Dragged:
                 state = newState;
+                pickUpCollider.enabled = false;
+
                 break;
 
         }

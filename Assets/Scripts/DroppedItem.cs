@@ -1,96 +1,189 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.IO.LowLevel.Unsafe;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class DroppedItem : MonoBehaviour
 {
-    [SerializeField] private float dispawnTime = 100.0f;
-    [SerializeField] private float timeToActivate = 2.0f;
-    [SerializeField] private float moveSpeed = 1.0f;
+
+    [SerializeField] Magnetization magnet;
+
+    public enum DroppedItemState
+    {
+        Idle,
+        Dropped,
+        Magnetised
+    }
+
+    public DroppedItemState state;
+
+    [SerializeField] private Item itemBasic;
+    [SerializeField] private float despawnTime = 100.0f;
+    [SerializeField] private float activateDelay = 2.0f;
     [SerializeField] private float stopDistance = 0.5f;
+    [SerializeField] private float swingSpeed = 2.0f;
+    [SerializeField] private float swingAmount = 0.1f;
+    [SerializeField] private Rigidbody2D rb;
 
-    [SerializeField] private GameObject inventoryItemPrefab;
-
-    private float timeSpent = 0.0f;
-
+    private Vector3 lastPosition;
+    private float timeDropped;
     private Collider2D pickUpCollider;
+    private Coroutine activationCoroutine;
 
-    private Transform moveTo = null;
-
-    void Start()
+    public void Start()
     {
+        magnet = GetComponent<Magnetization>();
         pickUpCollider = GetComponent<Collider2D>();
-        if (pickUpCollider != null )
-            pickUpCollider.enabled = false;
+        rb = GetComponent<Rigidbody2D>();
+
+        activationCoroutine = StartCoroutine(DelayedActivate());
+
+        lastPosition = transform.position;
+        state = DroppedItemState.Dropped;
     }
 
-    void FixedUpdate()
+    private void Update()
     {
-        timeSpent += Time.fixedDeltaTime;
-
-        if (timeSpent > dispawnTime)
+        if (state == DroppedItemState.Idle && magnet.target == null)
         {
-            Despawn();
+            ApplySwing();
         }
-
-        if (timeSpent > timeToActivate)
+        else
         {
-            pickUpCollider.enabled = true;
-        }
-
-        if (moveTo != null)
-        {
-            Vector3 direction = moveTo.position - transform.position;
-            if (direction.magnitude > stopDistance)
-            {
-                direction.Normalize();
-
-                Vector3 newPosition = Vector3.Lerp(transform.position, moveTo.position, moveSpeed * Time.deltaTime);
-
-                transform.position = newPosition;
-            }
-            else
-            {
-                // TEMP
-                var managerObject = GameObject.Find("GameManager");
-                if (managerObject && managerObject.TryGetComponent<GameManager>(out var manager))
-                {
-                    Debug.Log("GameManager");
-
-                    //manager.AddItemToInventory(inventoryItemPrefab);
-
-                    //manager.AddItemToInventory(this.gameObject);
-
-
-                    manager.AddCoins(1);
-                }
-                Despawn();
-            }
+            lastPosition = transform.position;
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {     
-        if (collision == null) return;
-
-        if(collision.gameObject != null 
-            && collision.gameObject.transform != null)
-        {
-            // TEMP
-            //moveTo = collision.gameObject.transform;
-        }
-    }
-
-    public void SetTarget(Transform newTarget)
+    private void ApplySwing()
     {
-        if (newTarget != null)
-        {
-            moveTo = newTarget;
-        }
+        float swing = Mathf.Sin(Time.time * swingSpeed) * swingAmount;
+        transform.position = new Vector3(lastPosition.x, lastPosition.y + swing, lastPosition.z);
     }
 
-    private void Despawn()
+    public void Delete()
     {
         Destroy(gameObject);
+    }
+
+    public Item GetInventoryItem()
+    {
+        return itemBasic;
+    }
+    public Item.ItemType GetInventoryItemType()
+    {
+        if (itemBasic != null) return itemBasic.type;
+        return Item.ItemType.None;
+    }
+
+    public bool TrySetMagnetTarget(Transform target)
+    {
+        if (magnet == null || magnet.target != null) return false;
+
+        if (magnet.TrySetTarget(target))
+        {
+            if (state == DroppedItemState.Idle) ChangeState(DroppedItemState.Magnetised);
+            return true;
+        }
+        return false;
+    }
+
+    public bool TryClearMagnetTarget(Transform target)
+    {
+        if (magnet != null && magnet.target == target)
+        {
+            magnet.target = null;
+            ChangeState(DroppedItemState.Idle);
+            return true;
+        }
+        return false;
+    }
+
+    public bool CanBePicked()
+    {
+        return state == DroppedItemState.Idle;
+    }
+
+    public bool CanBePicked(Transform target)
+    {
+        if (state != DroppedItemState.Dropped && target == magnet.target) return true;
+        
+        return false;
+    }
+
+    private IEnumerator DelayedActivate()
+    {
+        yield return new WaitForSeconds(activateDelay);
+
+        // Stop falling after drop
+        if (TryGetComponent(out Rigidbody2D rb))
+        {
+            rb.isKinematic = true;
+            rb.gravityScale = 0.0f;
+            rb.velocity = Vector3.zero;
+        }
+
+        lastPosition = transform.position;
+
+        magnet.bCanMagnetize = true;
+
+        if (magnet.target == null) ChangeState(DroppedItemState.Idle);
+
+        else ChangeState(DroppedItemState.Magnetised);
+    }
+
+    // TODO
+    public void ChangeState(DroppedItemState newState)
+    {
+        state = newState;
+
+        switch (newState)
+        {
+            case DroppedItemState.Idle:
+                if (magnet) magnet.bCanMagnetize = true;
+                if (magnet.target != null) ChangeState(DroppedItemState.Magnetised);
+               
+
+                break;
+
+            case DroppedItemState.Dropped:
+                
+                break;
+
+            case DroppedItemState.Magnetised:
+                
+
+                break;
+        }
+
+    }
+
+
+    public void Throw(Vector2 throwDirection, float throwForce)
+    {
+        if (rb == null) rb = GetComponent<Rigidbody2D>();
+
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+
+            rb.velocity = throwDirection.normalized * throwForce;
+
+            rb.gravityScale = 1.0f;
+        }
+    }
+
+    // NEW FEATURE
+
+    
+
+    public void AddTarget(Transform t,  int p)
+    {
+        magnet.AddTarget(t, p);
+    }
+
+    public void RemoveTarget(Transform t)
+    {
+        magnet.RemoveTarget(t);
     }
 }

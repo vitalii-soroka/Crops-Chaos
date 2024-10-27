@@ -4,44 +4,28 @@ using UnityEngine;
 
 public class Workbench : MonoBehaviour
 {
-    [SerializeField] Collider2D triggerCollider;
-
+    [SerializeField] Pickup pickup;    
+    
     // TEMP RESULT OF DESTRUCTION
     [SerializeField] GameObject go;
 
     void Start()
     {
-        triggerCollider = GetComponent<Collider2D>();
+        if (pickup != null)
+            pickup.OnPickup.AddListener(OnPickUp);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision == null) return;
 
-        if (collision.TryGetComponent<PickupItem>(out var pickup))
+    void OnPickUp(DroppedItem drop)
+    {
+        Destroy(drop.gameObject);
+
+        var dropItem = Instantiate(go);
+        dropItem.transform.position = transform.position;
+
+        if (dropItem.TryGetComponent(out DroppedItem dropComponent))
         {
-            if (pickup.GetInventoryType() == Item.ItemType.Crop)
-            {
-                Debug.Log("WOnTriggerEnter2D");
-                pickup.SetTarget(this.transform);
-                pickup.ItemApproach.AddListener(OnItemApproach);
-            }
+            dropComponent.Throw(Vector3.right + Vector3.up, 4.0f);
         }
     }
-
-    public void OnItemApproach(PickupItem pickItem)
-    {
-        Debug.Log("OnItemApproach");
-
-        if (go != null)
-        {
-            var prizeObject = Instantiate(go);
-            prizeObject.transform.position = transform.position;
-        }
-
-        //var seedItem = (SeedItem)pickItem.GetInventoryItem();
-        //var seed = Instantiate(seedItem.cropPrefab, transform);
-        //seed.transform.position = transform.position;
-    }
-
 }

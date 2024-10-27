@@ -11,6 +11,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float walkSpeed = 5f;
     [SerializeField] private float runSpeed = 5f;
 
+    [SerializeField] private float itemThrowForce = 5f;
+
+    [SerializeField] private Vector3 itemthrowDirection = Vector3.left + Vector3.up;
+
     [SerializeField] GameObject buildShop;
 
     private Rigidbody2D rb;
@@ -124,7 +128,12 @@ public class PlayerController : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Q) && inventory != null)
         {
-            inventory.Drop();
+
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePosition.z = 0f;
+            Vector3 directionToMouse = (mousePosition - transform.position).normalized;
+
+            inventory.Drop(directionToMouse, itemThrowForce);
         }
     }
 

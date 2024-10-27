@@ -1,7 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,128 +6,136 @@ public class PickupItem : MonoBehaviour
 {
     public enum PickupItemState
     {
-        Idle,    // Waited for some time and now idle
-        Dropped,  // Just Dropped 
-        Dragged
+        Idle,       
+        Dropped,    
+        Magnetised    
     }
 
     public PickupItemState state;
 
-    // Item representation in Inventory
     [SerializeField] private Item item;
-
-    [SerializeField] private float dispawnTime = 100.0f;
-    [SerializeField] private float timeToActivate = 2.0f;
+    [SerializeField] private float despawnTime = 100.0f;
+    [SerializeField] private float activateDelay = 2.0f;
     [SerializeField] private float moveSpeed = 1.0f;
     [SerializeField] private float stopDistance = 0.5f;
+    [SerializeField] private float swingSpeed = 2.0f;
+    [SerializeField] private float swingAmount = 0.1f;
 
-    [SerializeField] private float swingSpeed = 2.0f;  // Speed of the swinging
-    [SerializeField] private float swingAmount = 0.1f; // Amount of rotation (swing)
+    public Transform target;
+
     private Vector3 startPosition;
-
-    private float timeDropped = 0.0f;
-
+    private float timeDropped;
     private Collider2D pickUpCollider;
+    private Coroutine activationCoroutine;
 
-    [SerializeField]
-    private Transform moveTo = null;
+    public UnityEvent<PickupItem> OnReadyToPickup;
+    public UnityEvent<PickupItem> OnItemApproach;
 
-    public UnityEvent<PickupItem> ReadyPickup;
-    public UnityEvent<PickupItem> ItemApproach;
-
-    void Start()
+    private void Start()
     {
         pickUpCollider = GetComponent<Collider2D>();
-
-        //if (pickUpCollider != null)
-        //    pickUpCollider.enabled = false;
+        if (pickUpCollider != null)
+            pickUpCollider.enabled = true;
 
         startPosition = transform.position;
-
         ChangeState(PickupItemState.Dropped);
-
         gameObject.layer = LayerMask.NameToLayer("Pickup");
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         timeDropped += Time.fixedDeltaTime;
 
-        if (timeDropped > dispawnTime)
+        if (timeDropped > despawnTime)
         {
             Despawn();
+            return;
         }
 
-        if (state == PickupItemState.Dropped && timeDropped > timeToActivate)
+        if (state == PickupItemState.Magnetised && target != null)
         {
-            ChangeState(PickupItemState.Idle);
-            ReadyPickup.Invoke(this);
-            
+            MoveTowardsTarget();
         }
-
-        if (moveTo != null)
+        else if (state == PickupItemState.Idle)
         {
-            ChangeState(PickupItemState.Dragged);
+            ApplySwing();
+        }
+    }
 
-            Vector3 direction = moveTo.position - transform.position;
-            if (direction.magnitude > stopDistance)
-            {
-                direction.Normalize();
+    private void ChangeState(PickupItemState newState)
+    {
+        state = newState;
+        
+        switch (newState)
+        {
+            case PickupItemState.Idle:
+                if (pickUpCollider) pickUpCollider.enabled = true;
+                break;
 
-                Vector3 newPosition = Vector3.Lerp(transform.position, moveTo.position, moveSpeed * Time.fixedDeltaTime);
+            case PickupItemState.Dropped:
+                pickUpCollider.enabled = true;
+                timeDropped = 0.0f;
+                activationCoroutine = StartCoroutine(DelayedActivate());
+                break;
 
-                transform.position = newPosition;
-            }
+            case PickupItemState.Magnetised:
+                if (pickUpCollider) pickUpCollider.enabled = false;
 
-            else
-            {
-                ItemApproach.Invoke(this);
-                ItemApproach.RemoveAllListeners();
-                Despawn();
-            }
+                if (activationCoroutine != null) 
+                {
+                    StopCoroutine(activationCoroutine);
+                    activationCoroutine = null; 
+                }
+
+                break;
+        }
+    }
+
+    private IEnumerator DelayedActivate()
+    {
+        yield return new WaitForSeconds(activateDelay);
+        ChangeState(PickupItemState.Idle);
+        OnReadyToPickup.Invoke(this);
+    }
+
+    private void MoveTowardsTarget()
+    {
+        Vector3 direction = target.position - transform.position;
+        if (direction.magnitude > stopDistance)
+        {
+            direction.Normalize();
+            transform.position = Vector3.Lerp(transform.position, target.position, moveSpeed * Time.fixedDeltaTime);
         }
         else
         {
-            // Idle
-            VerticalSwing();
+            OnItemApproach.Invoke(this);
+            ResetTarget();
+            Despawn();
         }
     }
 
-    private void Update()
-    {
-        
-    }
-
-    void VerticalSwing()
+    private void ApplySwing()
     {
         float swing = Mathf.Sin(Time.time * swingSpeed) * swingAmount;
         transform.position = new Vector3(startPosition.x, startPosition.y + swing, startPosition.z);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision == null) return;
-
-        if (collision.gameObject != null
-            && collision.gameObject.transform != null)
-        {
-            // TEMP
-            //moveTo = collision.gameObject.transform;
-        }
-    }
-
     public void SetTarget(Transform newTarget)
     {
-        if (moveTo == null && newTarget != null)
+        if (target == null && newTarget != null)
         {
-            moveTo = newTarget;
-            ChangeState(PickupItemState.Dragged);
+            target = newTarget;
+            ChangeState(PickupItemState.Magnetised);
+
+            OnReadyToPickup.RemoveAllListeners();
+            OnItemApproach.RemoveAllListeners();
         }
     }
 
-    public PickupItemState GetState()
+    private void ResetTarget()
     {
-        return state;
+        target = null;
+        ChangeState(PickupItemState.Idle);
     }
 
     private void Despawn()
@@ -146,30 +151,5 @@ public class PickupItem : MonoBehaviour
     public Item.ItemType GetInventoryType()
     {
         return item != null ? item.type : Item.ItemType.None;
-    }
-
-    private void ChangeState(PickupItemState newState)
-    {
-        switch(newState)
-        {
-            case PickupItemState.Idle:
-                state = newState;
-                break;
-
-            case PickupItemState.Dropped:
-                moveTo = null;
-                state = newState;
-                timeDropped = 0.0f;
-                pickUpCollider.enabled = true;
-
-                break;
-
-            case PickupItemState.Dragged:
-                state = newState;
-                pickUpCollider.enabled = false;
-
-                break;
-
-        }
     }
 }

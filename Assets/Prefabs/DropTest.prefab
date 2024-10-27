@@ -11,8 +11,10 @@ GameObject:
   - component: {fileID: 8756085118890747420}
   - component: {fileID: 2311404648409743571}
   - component: {fileID: -8354911894017587482}
-  - component: {fileID: 5236227527005481629}
-  m_Layer: 23
+  - component: {fileID: 8423625662356554151}
+  - component: {fileID: 5572071098388877625}
+  - component: {fileID: 4680550930539924814}
+  m_Layer: 25
   m_Name: DropTest
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -101,7 +103,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 33554432
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -120,8 +122,8 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
---- !u!114 &5236227527005481629
+  m_Radius: 0.3
+--- !u!114 &8423625662356554151
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,21 +132,60 @@ MonoBehaviour:
   m_GameObject: {fileID: 3108244455157730178}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0a3681c639c945499caaa7faff8405c, type: 3}
+  m_Script: {fileID: 11500000, guid: 4cb3f514db8a7eb4e9d360b6da8d4992, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 0
-  item: {fileID: 11400000, guid: fac63d750c75fd84c9934be8e4eec500, type: 2}
-  dispawnTime: 100
-  timeToActivate: 2
-  moveSpeed: 1
+  magnetizationSpeed: 1
+  stopDistance: 0.5
+  despawnTime: 2000
+  activateDelay: 1
+  target: {fileID: 0}
+  bCanMagnetize: 0
+--- !u!114 &5572071098388877625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3108244455157730178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73cbd45fa19237d4795b3e4cd2c4de39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  magnet: {fileID: 8423625662356554151}
+  state: 1
+  itemBasic: {fileID: 11400000, guid: fac63d750c75fd84c9934be8e4eec500, type: 2}
+  despawnTime: 100
+  activateDelay: 1
   stopDistance: 0.5
   swingSpeed: 2
   swingAmount: 0.1
-  moveTo: {fileID: 0}
-  ReadyPickup:
-    m_PersistentCalls:
-      m_Calls: []
-  ItemApproach:
-    m_PersistentCalls:
-      m_Calls: []
+  rb: {fileID: 0}
+--- !u!50 &4680550930539924814
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3108244455157730178}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4

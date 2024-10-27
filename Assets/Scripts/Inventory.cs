@@ -17,6 +17,9 @@ public class Inventory : MonoBehaviour
     public UnityEvent<int> ItemSelected;
     public UnityEvent InventoryChanged;
 
+    [SerializeField] Pickup pickup;
+    [SerializeField] Magnet magnet;
+
     void Start()
     {
         slots = new List<InventorySlot>();
@@ -25,8 +28,12 @@ public class Inventory : MonoBehaviour
         {
             slots.Add(new InventorySlot());
         }
-    }
 
+        if (pickup != null)
+        {
+            pickup.OnPickup.AddListener(OnPickup);
+        }
+    }
     void Update()
     {
         float scroll = Input.GetAxis("Mouse ScrollWheel");
@@ -37,6 +44,23 @@ public class Inventory : MonoBehaviour
             ItemSelected.Invoke(currentIndex);
         }
     }
+
+    public void OnPickup(DroppedItem dropItem)
+    {
+        if (dropItem.CanBePicked(magnet.transform))
+        {
+            if (CanPickup(dropItem))
+            {
+                AddItem(dropItem.GetInventoryItem());
+                dropItem.Delete();
+            }
+            else
+            {
+                dropItem.TryClearMagnetTarget(transform);
+            }
+        }
+    }
+
 
     public Item GetSelectedItem()
     {
@@ -49,44 +73,31 @@ public class Inventory : MonoBehaviour
         return (value + change + slots.Count) % slots.Count;
     }
 
-    // TODO just PickUp mechanic
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision == null || !collision.CompareTag(StaticTags.Item)) return;
+        //if (collision == null) return;
 
-        if (collision.TryGetComponent<PickupItem>(out var pickup))
-        {
-            Debug.Log("OnTriggerEnter2D");
-            if (pickup.state == PickupItem.PickupItemState.Dropped)
-                pickup.ReadyPickup.AddListener(OnItemReadyToPickup);
-
-            else if (pickup.state == PickupItem.PickupItemState.Idle)
-                OnItemReadyToPickup(pickup);
-        }
+        //if (collision.CompareTag(StaticTags.Item) && collision.TryGetComponent<DroppedItem>(out var drop))
+        //{
+        //    if (CanPickup(drop))
+        //    {
+        //        drop.AddTarget(transform, pickup != null ? pickup.priority : 0);
+        //    }
+        //}
     }
 
-    private void OnItemApproach(PickupItem pickItem)
-    {        
-        Debug.Log("IOnItemApproach");
-
-        if (CanPickup(pickItem))
-        {
-           AddItem(pickItem.GetInventoryItem());
-        }
-    }
-
-    private void OnItemReadyToPickup(PickupItem pickup)
+    private void OnTriggerExit2D(Collider2D collision)
     {
-        Debug.Log("IOnItemReadyToPickup");
+        //if (collision == null) return;
 
-        TrySetPickup(pickup);
-        pickup.ItemApproach.AddListener(OnItemApproach);
-        
+        //if (collision.CompareTag(StaticTags.Item) && collision.TryGetComponent<DroppedItem>(out var drop))
+        //{
+        //    drop.RemoveTarget(transform);
+        //}
     }
 
     private void TrySetPickup(PickupItem pickup)
     {
-        // TODO : currently item remember to be picked should we leave this behaviour?
 
         foreach (var slot in slots)
         {
@@ -94,17 +105,19 @@ public class Inventory : MonoBehaviour
 
             if (hasItem || slot.IsEmpty())
             {
+                Debug.Log("target");
                 pickup.SetTarget(transform);
                 return;
             }
         }
+        Debug.Log("ntarget");
     }
 
-    public bool CanPickup(PickupItem pickup)
+    public bool CanPickup(DroppedItem dropped)
     {
         foreach (var slot in slots)
         {
-            bool hasItem = !slot.IsFull() && slot.HasItemType(pickup.GetInventoryItem());
+            bool hasItem = !slot.IsFull() && slot.HasItemType(dropped.GetInventoryItem());
 
             if (hasItem || slot.IsEmpty())
             {
@@ -190,15 +203,33 @@ public class Inventory : MonoBehaviour
 
     public void Drop()
     {
-        //Debug.Log("Drop");
         if (slots[currentIndex].IsEmpty()) return;
 
         if (slots[currentIndex].item == null || slots[currentIndex].item.itemPrefab == null) return;
 
+        slots[currentIndex].SubstructItem();
         // TEMP
         var dropped = Instantiate(slots[currentIndex].item.itemPrefab);
         dropped.transform.position = transform.position;
-        
+       
+
+        InventoryChanged.Invoke();
+    }
+
+    public void Drop(Vector2 throwDirection, float throwForce)
+    {
+        if (slots[currentIndex].IsEmpty()) return;
+
+        if (slots[currentIndex].item == null || slots[currentIndex].item.itemPrefab == null) return;
+
+        var dropItem = Instantiate(slots[currentIndex].item.itemPrefab);
+        dropItem.transform.position = transform.position;
+
+        if (dropItem.TryGetComponent(out DroppedItem dropComponent))
+        {
+            dropComponent.Throw(throwDirection, throwForce);
+        }
+
         slots[currentIndex].SubstructItem();
 
         InventoryChanged.Invoke();

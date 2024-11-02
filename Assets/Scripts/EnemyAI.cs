@@ -6,95 +6,147 @@ using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
 {
     public Transform player;
-    public Transform[] crops;
-    public float detectionRadius = 10f;
+
+
+    public float detectionRadius = 10f; 
+    public float loseSightRadius = 12f;
+
     public float attackDistance = 1.5f;
+
     public float cropEatingTime = 2f;
 
-    private Transform currentTarget;
-    private NavMeshAgent agent;
+    //private Transform currentTarget;
+
     private bool isEating = false;
+
+    
+
+
+    [SerializeField] float speed = 1.0f;
+    [SerializeField] Rigidbody2D rb;
+
+    [SerializeField] EnemyState state;
+
+    [SerializeField] LayerMask layerMask;
+
+
+    [SerializeField] private LayerMask obstacleLayer; // Set this layer for objects blocking LOS
+
+    public float detectionRadiuss = 2f;
+
+    public enum EnemyState
+    {
+        Idle,
+        Pursuing,
+        Temp
+    }
+
+    private Vector3 lastKnownPosition;
 
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
-        FindTarget();
+        rb = GetComponent<Rigidbody2D>();
+        state = EnemyState.Idle;
     }
 
     void Update()
     {
-        if (isEating) return;
+        // TODO On trigger check i guess
 
         float playerDistance = Vector3.Distance(transform.position, player.position);
 
-        if (playerDistance <= detectionRadius)
+        if (state == EnemyState.Idle)
         {
-            currentTarget = player;
-            MoveToTarget();
-        }
-        else
-        {
-            FindTarget();
-        }
-
-        if (currentTarget != null && Vector3.Distance(transform.position, currentTarget.position) <= attackDistance)
-        {
-            if (currentTarget == player)
-                AttackPlayer();
-            else
-                StartCoroutine(EatCrop(currentTarget));
-        }
-    }
-
-    private void FindTarget()
-    {
-        float closestDistance = Mathf.Infinity;
-        Transform closestCrop = null;
-
-        foreach (Transform crop in crops)
-        {
-            float distance = Vector3.Distance(transform.position, crop.position);
-            if (distance < closestDistance && distance <= detectionRadius)
+            if (playerDistance <= detectionRadius && HasLineOfSight())
             {
-                closestDistance = distance;
-                closestCrop = crop;
+                state = EnemyState.Pursuing;
+                lastKnownPosition = player.position;
             }
         }
 
-        currentTarget = closestCrop;
-        MoveToTarget();
-    }
-
-    private void MoveToTarget()
-    {
-        if (currentTarget != null)
+        if (state == EnemyState.Pursuing)
         {
-            agent.isStopped = false;
-            agent.SetDestination(currentTarget.position);
+            if (playerDistance <= detectionRadius && HasLineOfSight())
+            {
+                lastKnownPosition = player.position;
+                rb.velocity = speed * (player.position - transform.position).normalized;
+            }
+
+            else if (playerDistance <= loseSightRadius)
+            {
+                state = EnemyState.Temp;
+                lastKnownPosition = player.position;
+                rb.velocity = speed * (lastKnownPosition - transform.position).normalized;
+            }
+            else
+            {
+                state = EnemyState.Idle;
+                rb.velocity = Vector2.zero;
+            }
         }
-        else
+
+        if (state == EnemyState.Temp)
         {
-            agent.isStopped = true;
+            if (HasLineOfSight() && playerDistance <= detectionRadius)
+            {
+                state = EnemyState.Pursuing;
+                lastKnownPosition = player.position;
+            }
+            else if (Vector3.Distance(transform.position, lastKnownPosition) < 1)
+            {
+                state = EnemyState.Idle;
+                rb.velocity = Vector2.zero;
+            }
         }
     }
 
-    private void AttackPlayer()
+    private bool HasLineOfSightCircle()
     {
-        Debug.Log("Enemy attacks the player!");
+        // TODO make circles colliders appear not line? Or two - three raycats
+
+        return false; 
     }
 
-    private IEnumerator EatCrop(Transform crop)
+
+    private bool HasLineOfSight()
     {
-        isEating = true;
-        agent.isStopped = true;
-        Debug.Log("Enemy starts eating the crop!");
+        Vector2 directionToPlayer = player.position - transform.position;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, 
+            directionToPlayer, detectionRadius, obstacleLayer | LayerMask.GetMask("Player"));
 
-        yield return new WaitForSeconds(cropEatingTime);
 
-        Debug.Log("Enemy finishes eating the crop!");
-        Destroy(crop.gameObject);
 
-        isEating = false;
-        FindTarget();
+        bool directHit = hit.collider != null && hit.collider.transform == player;
+
+        if (directHit) return true;
+
+        if (state != EnemyState.Pursuing) return false;
+        
+        Vector2 directionToPlayer2 = player.position - lastKnownPosition;
+        RaycastHit2D hit2 = Physics2D.Raycast(lastKnownPosition,
+            directionToPlayer2, detectionRadius, obstacleLayer | LayerMask.GetMask("Player"));
+
+        return hit2.collider != null && hit2.collider.transform == player;
     }
+
+    private void OnDrawGizmos()
+    {
+        // Draw the detection radius in green
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+
+        // Draw the attack distance in red
+        //Gizmos.color = Color.red;
+        //Gizmos.DrawWireSphere(transform.position, attackDistance);
+
+        if (player != null)
+        {
+            // Draw LOS line to the player, colored based on visibility
+            Gizmos.color = HasLineOfSight() ? Color.green : Color.gray;
+            Gizmos.DrawLine(transform.position, player.position);
+            Gizmos.DrawLine(lastKnownPosition, player.position);
+        }
+
+    }
+
 }

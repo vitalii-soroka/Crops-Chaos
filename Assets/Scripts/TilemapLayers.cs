@@ -29,7 +29,6 @@ public class TilemapLayers : MonoBehaviour
         {
             tileMaps.Add("OnFieldMap", onfieldMap);
         }
-
     }
 
     private void Awake()

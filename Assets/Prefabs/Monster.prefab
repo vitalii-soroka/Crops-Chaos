@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 9172663188604214449}
   - component: {fileID: 5729111669015432755}
-  - component: {fileID: 6276618406745285289}
   - component: {fileID: 6692307022236598329}
   - component: {fileID: 823751782827382863}
   - component: {fileID: 7797615217108514318}
+  - component: {fileID: 5093887863220475713}
   m_Layer: 0
   m_Name: Monster
   m_TagString: Enemy
@@ -75,11 +75,11 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1869315837
-  m_SortingLayer: 1
+  m_SortingLayer: 2
   m_SortingOrder: 2
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6,
     type: 3}
-  m_Color: {r: 0.8773585, g: 0.36707297, b: 0.32694018, a: 1}
+  m_Color: {r: 0.8773585, g: 0.36707297, b: 0.32694018, a: 0.46666667}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -89,19 +89,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &6276618406745285289
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 40214514355895880}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fcb334c5b327c7440a83fa1c64abecab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 0}
 --- !u!114 &6692307022236598329
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,7 +96,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 40214514355895880}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 328475de3a2e79a4382b8c1631c41b0a, type: 3}
   m_Name: 
@@ -175,7 +162,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 40214514355895880}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -194,3 +181,30 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &5093887863220475713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40214514355895880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ecaa7d3900ffff4eba15a2a1bf5bd90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  detectionRadius: 9
+  loseSightRadius: 5
+  attackDistance: 1
+  cropEatingTime: 2
+  speed: 1
+  rb: {fileID: 7797615217108514318}
+  state: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 16777216
+  detectionRadiuss: 2

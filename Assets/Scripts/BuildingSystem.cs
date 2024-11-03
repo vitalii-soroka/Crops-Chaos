@@ -25,6 +25,8 @@ public class BuildingSystem : MonoBehaviour
 
     private Vector3 lastPreviewPosition;
 
+    public TileBase testTile;
+
     void Start()
     {
         if (menu != null)
@@ -98,6 +100,7 @@ public class BuildingSystem : MonoBehaviour
         if (buildTileMap != null)
         {
             buildTileMap.SetTileNotify(buildTileMap.WorldToCell(buildPreview.GetPreviewPosition()));
+            ground.SetTile(buildTileMap.WorldToCell(buildPreview.GetPreviewPosition()), testTile);
         }
         // Build other objects
         else

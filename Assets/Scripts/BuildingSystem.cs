@@ -9,6 +9,9 @@ using UnityEngine.UIElements;
 
 public class BuildingSystem : MonoBehaviour
 {
+    [SerializeField] public Tilemap generalTilemap;
+    [SerializeField] public TilemapPathfinding pathFinder;
+
     [SerializeField] TileMapWrapper ground;
     [SerializeField] TileMapWrapper onGround;
 
@@ -19,6 +22,7 @@ public class BuildingSystem : MonoBehaviour
     [SerializeField] private GameObject buildParent;
 
     [SerializeField] private float collisionOffset = 0.2f;
+
 
     private GameObject buildPrefab = null;
     private TileMapWrapper buildTileMap = null;
@@ -100,8 +104,14 @@ public class BuildingSystem : MonoBehaviour
         if (buildTileMap != null)
         {
             buildTileMap.SetTileNotify(buildTileMap.WorldToCell(buildPreview.GetPreviewPosition()));
-            ground.SetTile(buildTileMap.WorldToCell(buildPreview.GetPreviewPosition()), testTile);
+
+            
+            // TEMP
+            generalTilemap.SetTile(generalTilemap.WorldToCell(buildPreview.GetPreviewPosition()), testTile);
+            pathFinder.RecalculateNode(buildPreview.GetPreviewPosition());
+
         }
+
         // Build other objects
         else
         {

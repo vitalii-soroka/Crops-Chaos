@@ -18285,7 +18285,7 @@ GameObject:
   - component: {fileID: 1022048619}
   - component: {fileID: 1022048618}
   - component: {fileID: 1022048621}
-  m_Layer: 0
+  m_Layer: 24
   m_Name: totem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29879,7 +29879,7 @@ GameObject:
   - component: {fileID: 1529421449}
   - component: {fileID: 1529421448}
   m_Layer: 0
-  m_Name: GameObject (1)
+  m_Name: Pathfinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29900,6 +29900,7 @@ MonoBehaviour:
   tilemap: {fileID: 208862234}
   walkableTile: {fileID: 0}
   obstacleTile: {fileID: 11400000, guid: 372165b576007404ab91afc7c0894dda, type: 2}
+  skipCorners: 1
 --- !u!4 &1529421449
 Transform:
   m_ObjectHideFlags: 0
@@ -39451,9 +39452,19 @@ PrefabInstance:
         type: 2}
     - target: {fileID: 6393640573782726013, guid: 0ad9232abfd6575439f0d6d639a29f0a,
         type: 3}
+      propertyPath: pathFinder
+      value: 
+      objectReference: {fileID: 1529421448}
+    - target: {fileID: 6393640573782726013, guid: 0ad9232abfd6575439f0d6d639a29f0a,
+        type: 3}
       propertyPath: buildPreview
       value: 
       objectReference: {fileID: 1965198156}
+    - target: {fileID: 6393640573782726013, guid: 0ad9232abfd6575439f0d6d639a29f0a,
+        type: 3}
+      propertyPath: generalTilemap
+      value: 
+      objectReference: {fileID: 208862234}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -40859,6 +40870,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: BuildingSystem
       objectReference: {fileID: 0}
+    - target: {fileID: 5882234487193793364, guid: a0e8b9e52a3f43047abb1234f8d8020d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8041574134152460800, guid: a0e8b9e52a3f43047abb1234f8d8020d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -40909,6 +40925,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8896802310235140345, guid: a0e8b9e52a3f43047abb1234f8d8020d,
+        type: 3}
+      propertyPath: pathFinder
+      value: 
+      objectReference: {fileID: 1529421448}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

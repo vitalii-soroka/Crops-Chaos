@@ -90,4 +90,19 @@ public class TileMapWrapper : MonoBehaviour
        return tilemap.GetCellCenterWorld(cellpos);
     }
 
+    public BoundsInt GetCellBounds()
+    {
+        return tilemap.cellBounds;
+    }
+
+    public Vector3 GetCellToWorld(Vector3Int pos)
+    {
+        return tilemap.CellToWorld(pos);
+    }
+
+    public Vector3 GetCellSize()
+    {
+        return tilemap.cellSize;
+    }
+
 }

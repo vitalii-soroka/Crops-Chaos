@@ -25,6 +25,7 @@ public class DroppedItem : MonoBehaviour
     [SerializeField] private float swingSpeed = 2.0f;
     [SerializeField] private float swingAmount = 0.1f;
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private float gravityScale = 0.1f;
 
     private Vector3 lastPosition;
     private float timeDropped;
@@ -169,7 +170,7 @@ public class DroppedItem : MonoBehaviour
 
             rb.velocity = throwDirection.normalized * throwForce;
 
-            rb.gravityScale = 1.0f;
+            rb.gravityScale = gravityScale;
         }
     }
 

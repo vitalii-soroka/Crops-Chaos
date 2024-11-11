@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+[Obsolete]
 public class GameActionsManager : MonoBehaviour
 {
     [SerializeField] TileField field;

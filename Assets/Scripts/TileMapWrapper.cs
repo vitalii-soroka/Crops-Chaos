@@ -19,17 +19,17 @@ public class TileMapWrapper : MonoBehaviour
     [SerializeField] private Tile[] tiles;
 
     //[SerializeField] private TileMapWrapperLayers[] ignoreLayers;
-    //[SerializeField] private CompositeCollider2D compositeCollider2D;
+    [SerializeField] private CompositeCollider2D compositeCollider2D;
 
     //public delegate void TileChangeHandler(Vector3Int position, TileBase newTile);
     //public event TileChangeHandler OnTileChanged;
-    public UnityEvent<Vector3, TileBase> OnTileChanged;
+    public UnityEvent<Vector3Int, TileBase> OnTileChanged;
 
 
-    public delegate void TileChange(Vector3Int position);
+    //public delegate void TileChange(Vector3Int position);
     //public event TileChange OnTileChange;
 
-    public UnityEvent<Vector3> OnTileChange;
+    //public UnityEvent<Vector3> OnTileChange;
 
     public void DrawTileWrapper(TileWrapper tile, Vector3Int centerPos)
     {
@@ -44,7 +44,7 @@ public class TileMapWrapper : MonoBehaviour
     void Start()
     {
         tilemap = GetComponent<Tilemap>();
-        //compositeCollider2D = GetComponent<CompositeCollider2D>();
+        compositeCollider2D = GetComponent<CompositeCollider2D>();
     }
 
     public bool HasCollider()
@@ -60,8 +60,8 @@ public class TileMapWrapper : MonoBehaviour
 
     public void SetTileNotify(Vector3Int position)
     {
-        tilemap.SetTile(position, tiles[9]);
-        OnTileChange?.Invoke(position);
+        SetTileNotify(position, tiles[9]);
+        //tilemap.SetTile(position, tiles[9]);
     }
 
     public void SetTile(Vector3Int position, TileBase tile)

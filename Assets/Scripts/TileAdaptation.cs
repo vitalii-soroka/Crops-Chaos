@@ -12,7 +12,6 @@ public class TileAdaptation : MonoBehaviour
     {
         tilemap = GetComponent<TileMapWrapper>();
         tilemap.OnTileChanged.AddListener(OnTileChanged);
-        tilemap.OnTileChange.AddListener(OnTileChanged);
     }
 
     public void OnTileChanged(Vector3Int position, TileBase tile)
@@ -21,11 +20,12 @@ public class TileAdaptation : MonoBehaviour
         UpdateNeiborTiles(position);
 
     }
-    public void OnTileChanged(Vector3Int position)
-    {
-        UpdateTile(position);
-        UpdateNeiborTiles(position);
-    }
+    //public void OnTileChanged(Vector3Int position)
+    //{
+    //    UpdateTile(position);
+    //    UpdateNeiborTiles(position);
+    //}
+
     public void UpdateTile(Vector3Int cellPos)
     {
         if (tilemap.GetTile(cellPos) == null) return;

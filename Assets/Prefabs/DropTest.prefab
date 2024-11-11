@@ -157,11 +157,12 @@ MonoBehaviour:
   state: 1
   itemBasic: {fileID: 11400000, guid: fac63d750c75fd84c9934be8e4eec500, type: 2}
   despawnTime: 100
-  activateDelay: 1
+  activateDelay: 0.5
   stopDistance: 0.5
   swingSpeed: 2
   swingAmount: 0.1
-  rb: {fileID: 0}
+  rb: {fileID: 4680550930539924814}
+  gravityScale: 1
 --- !u!50 &4680550930539924814
 Rigidbody2D:
   serializedVersion: 4

@@ -55,6 +55,9 @@ TagManager:
   - name: Building
     uniqueID: 300138375
     locked: 0
+  - name: NPC
+    uniqueID: 3706329119
+    locked: 0
   - name: Layer 1
     uniqueID: 2425651459
     locked: 0

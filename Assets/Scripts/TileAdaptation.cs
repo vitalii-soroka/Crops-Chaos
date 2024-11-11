@@ -11,8 +11,8 @@ public class TileAdaptation : MonoBehaviour
     void Start()
     {
         tilemap = GetComponent<TileMapWrapper>();
-        tilemap.OnTileChanged += OnTileChanged;
-        tilemap.OnTileChange += OnTileChanged;
+        tilemap.OnTileChanged.AddListener(OnTileChanged);
+        tilemap.OnTileChange.AddListener(OnTileChanged);
     }
 
     public void OnTileChanged(Vector3Int position, TileBase tile)

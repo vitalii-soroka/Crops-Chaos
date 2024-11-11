@@ -40,7 +40,6 @@ public class EnemyAI : MonoBehaviour
     private int targetIndex = 0;
     public TilemapPathfinding pathfinding;
 
-
     public float pathUpdateDelay = 0.5f; // Delay between path updates in seconds
 
     public enum EnemyState
@@ -64,12 +63,12 @@ public class EnemyAI : MonoBehaviour
     {
         while (true)
         {
-            // Get the start and target positions in grid coordinates
-            Vector3Int startPos = pathfinding.tilemap.WorldToCell(transform.position);
-            Vector3Int targetPos = pathfinding.tilemap.WorldToCell(player.position);
+            //Vector3Int startPos = pathfinding.tilemap.WorldToCell(transform.position);
+            //Vector3Int targetPos = pathfinding.tilemap.WorldToCell(player.position);
 
             // Recalculate the path to the player's current position
-            path = pathfinding.FindPath(startPos, targetPos);
+            path = pathfinding.FindPath(transform.position, player.position);
+
             targetIndex = 0; // Reset the index to start from the first node
 
             yield return new WaitForSeconds(pathUpdateDelay); // Wait before recalculating the path again

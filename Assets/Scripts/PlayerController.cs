@@ -35,7 +35,8 @@ public class PlayerController : MonoBehaviour
 
     //[SerializeField] TileField field;
 
-    [SerializeField] GameActionsManager gameManager;
+    //[SerializeField] GameActionsManager gameManager;
+    //[SerializeField] GameActionsManager gameManager;
 
     Inventory inventory;
 
@@ -86,13 +87,13 @@ public class PlayerController : MonoBehaviour
     //}
     void FieldTileInteraction2()
     {
-        if (gameManager == null) return;
+        if (GameManager.Instance == null) return;
 
-        if (gameManager.HasField(transform.position))
+        if (GameManager.Instance.HasField(transform.position))
         {
-            if (gameManager.HasCrop(transform.position))
+            if (GameManager.Instance.HasCrop(transform.position))
             {
-                gameManager.GatherCrop(transform.position);
+                GameManager.Instance.GatherCrop(transform.position);
                 return;
             }
 
@@ -102,14 +103,14 @@ public class PlayerController : MonoBehaviour
                 if (selectedItem != null && selectedItem.type == Item.ItemType.Seed)
                 {
                     var crop = ((SeedItem)selectedItem).cropPrefab;
-                    gameManager.PlantCrop(transform.position, crop);
+                    GameManager.Instance.PlantCrop(transform.position, crop);
                     inventory.SubstructItem();
                 }
             }
         }
         else
         {
-            gameManager.Dig(transform.position);
+            GameManager.Instance.Dig(transform.position);
         }
     }
 

@@ -129,14 +129,14 @@ public class TilemapPathfinding : MonoBehaviour
 
     public bool skipCorners = true;
 
-    private Dictionary<Vector3Int, Node> grid = new Dictionary<Vector3Int, Node>();
+    public Dictionary<Vector3Int, Node> grid = new Dictionary<Vector3Int, Node>();
 
     void Start()
     {
-        BuildGrid();
+        //BuildGrid();
     }
 
-    void BuildGrid()
+    public void BuildGrid()
     {
         BoundsInt bounds = tilemap.cellBounds;
 
@@ -157,7 +157,6 @@ public class TilemapPathfinding : MonoBehaviour
             Node node = kvp.Value;
             node.neighbors = CalculateNeighbors(node);
         }
-
     }
 
     List<Node> CalculateNeighbors(Node node)
@@ -204,6 +203,12 @@ public class TilemapPathfinding : MonoBehaviour
 
         return neighbors;
     }
+
+    public List<Node> FindPath(Vector3 start, Vector3 target)
+    {
+        return FindPath(tilemap.WorldToCell(start), tilemap.WorldToCell(target));
+    }
+
 
     public List<Node> FindPath(Vector3Int start, Vector3Int target)
     {
@@ -438,23 +443,6 @@ public class TilemapPathfinding : MonoBehaviour
             }
         }
     }
-    void OnDrawGizmos()
-    {
-        if (grid == null) return;
-
-        foreach (var kvp in grid)
-        {
-            Node node = kvp.Value;
-
-            // Convert tile position to world position for Gizmos
-            Vector3 worldPos = tilemap.CellToWorld(node.gridPosition) + tilemap.cellSize / 2;
-
-            // Set Gizmos color based on walkability
-            Gizmos.color = node.isWalkable ? Color.green : Color.red;
-
-            // Draw a circle with small radius at the node's position
-            Gizmos.DrawSphere(worldPos, 0.1f);
-        }
-    }
+   
 
 }

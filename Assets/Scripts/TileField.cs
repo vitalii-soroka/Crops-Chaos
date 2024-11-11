@@ -7,12 +7,9 @@ using UnityEngine.UIElements;
 
 public class TileField : MonoBehaviour
 {
-    
     private Dictionary<Vector3Int, GameObject> crops;
     private TileMapWrapper tileMap;
 
-    //[SerializeField] public Tilemap ground;
-    
     void Start()
     {
         tileMap = GetComponent<TileMapWrapper>();
@@ -38,6 +35,7 @@ public class TileField : MonoBehaviour
             crops[position].transform.SetParent(this.transform, true);
         }
     }
+   
     private void Gather(Vector3Int position)
     {
         if (!crops.ContainsKey(position) || !IsCropReady(position)) return;
@@ -46,6 +44,7 @@ public class TileField : MonoBehaviour
         if (dropComponent) dropComponent.Drop();
         crops.Remove(position);
     }
+   
     private void UnPlant(Vector3Int position)
     {
         if (crops.ContainsKey(position))
@@ -57,10 +56,12 @@ public class TileField : MonoBehaviour
             }
         }
     }
+   
     private bool HasCrop(Vector3Int position) 
     {
         return crops.ContainsKey(position);
     }
+    
     private bool IsCropReady(Vector3Int position)
     {
         if (!crops.ContainsKey(position)) return false;

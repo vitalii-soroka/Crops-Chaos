@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
 
-public class BuildingSystem : MonoBehaviour
+public class BuildingManager : MonoBehaviour
 {
-    [SerializeField] public Tilemap generalTilemap;
-    [SerializeField] public TilemapPathfinding pathFinder;
-
     [SerializeField] TileMapWrapper ground;
     [SerializeField] TileMapWrapper onGround;
 
@@ -23,13 +21,15 @@ public class BuildingSystem : MonoBehaviour
 
     [SerializeField] private float collisionOffset = 0.2f;
 
-
     private GameObject buildPrefab = null;
     private TileMapWrapper buildTileMap = null;
 
     private Vector3 lastPreviewPosition;
 
     public TileBase testTile;
+
+    public UnityEvent<TileBase, Vector3> OnTileBuild;
+
 
     void Start()
     {
@@ -105,11 +105,8 @@ public class BuildingSystem : MonoBehaviour
         {
             buildTileMap.SetTileNotify(buildTileMap.WorldToCell(buildPreview.GetPreviewPosition()));
 
-            
-            // TEMP
-            generalTilemap.SetTile(generalTilemap.WorldToCell(buildPreview.GetPreviewPosition()), testTile);
-            pathFinder.RecalculateNode(buildPreview.GetPreviewPosition());
-
+            // Changed Base Tile
+            OnTileBuild.Invoke(testTile, buildPreview.GetPreviewPosition());
         }
 
         // Build other objects

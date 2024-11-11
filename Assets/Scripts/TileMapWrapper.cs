@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
 
@@ -18,7 +19,17 @@ public class TileMapWrapper : MonoBehaviour
     [SerializeField] private Tile[] tiles;
 
     //[SerializeField] private TileMapWrapperLayers[] ignoreLayers;
-    [SerializeField] private CompositeCollider2D compositeCollider2D; 
+    //[SerializeField] private CompositeCollider2D compositeCollider2D;
+
+    //public delegate void TileChangeHandler(Vector3Int position, TileBase newTile);
+    //public event TileChangeHandler OnTileChanged;
+    public UnityEvent<Vector3, TileBase> OnTileChanged;
+
+
+    public delegate void TileChange(Vector3Int position);
+    //public event TileChange OnTileChange;
+
+    public UnityEvent<Vector3> OnTileChange;
 
     public void DrawTileWrapper(TileWrapper tile, Vector3Int centerPos)
     {
@@ -30,16 +41,10 @@ public class TileMapWrapper : MonoBehaviour
         }
     }
 
-    public delegate void TileChangeHandler(Vector3Int position, TileBase newTile);
-    public event TileChangeHandler OnTileChanged;
-
-    public delegate void TileChange(Vector3Int position);
-    public event TileChange OnTileChange;
-
     void Start()
     {
         tilemap = GetComponent<Tilemap>();
-        compositeCollider2D = GetComponent<CompositeCollider2D>();
+        //compositeCollider2D = GetComponent<CompositeCollider2D>();
     }
 
     public bool HasCollider()

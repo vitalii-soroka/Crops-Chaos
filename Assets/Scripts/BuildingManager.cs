@@ -7,6 +7,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
+using UnityEngine.WSA;
 
 public class BuildingManager : MonoBehaviour
 {
@@ -103,7 +104,9 @@ public class BuildingManager : MonoBehaviour
         // Build TileMap
         if (buildTileMap != null)
         {
-            buildTileMap.SetTileNotify(buildTileMap.WorldToCell(buildPreview.GetPreviewPosition()));
+            buildTileMap.
+                SetTileNotify(
+                buildTileMap.WorldToCell(buildPreview.GetPreviewPosition()), buildPreview.tile);
 
             // Changed Base Tile
             OnTileBuild.Invoke(testTile, buildPreview.GetPreviewPosition());

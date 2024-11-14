@@ -1,13 +1,20 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using static UnityEditorInternal.ReorderableList;
 
 
-public class TileAdaptation : MonoBehaviour
+public class TileMapWrapperAdapter : MonoBehaviour
 {
     TileMapWrapper tilemap;
-    
+
+    [SerializeField] public TileAdapt[] tileAdapters;
+
+    private TileAdapt currentAdapter = null;
+
     void Start()
     {
         tilemap = GetComponent<TileMapWrapper>();
@@ -16,28 +23,35 @@ public class TileAdaptation : MonoBehaviour
 
     public void OnTileChanged(Vector3Int position, TileBase tile)
     {
+        currentAdapter = FindAdapter(tile);
+
+        // No rules for adaption
+        if (currentAdapter == null) return;
+
+
         UpdateTile(position);
         UpdateNeiborTiles(position);
 
     }
-    //public void OnTileChanged(Vector3Int position)
-    //{
-    //    UpdateTile(position);
-    //    UpdateNeiborTiles(position);
-    //}
+
+    public TileAdapt FindAdapter(TileBase tile)
+    {
+        if (tileAdapters.Any(x => x.HasTile(tile))) return tileAdapters.First(x => x.HasTile(tile));
+        return null;
+    }
 
     public void UpdateTile(Vector3Int cellPos)
     {
-        if (tilemap.GetTile(cellPos) == null) return;
+        if (tilemap.GetTile(cellPos) == null || currentAdapter == null) return;
 
-        bool hasFieldAbove = CheckForNeighbor(cellPos, Vector2Int.up);
-        bool hasFieldBelow = CheckForNeighbor(cellPos, Vector2Int.down);
-        bool hasFieldLeft = CheckForNeighbor(cellPos, Vector2Int.left);
-        bool hasFieldRight = CheckForNeighbor(cellPos, Vector2Int.right);
+        bool hasFieldAbove = CheckForNeighborAdvanced(cellPos, Vector2Int.up);
+        bool hasFieldBelow = CheckForNeighborAdvanced(cellPos, Vector2Int.down);
+        bool hasFieldLeft = CheckForNeighborAdvanced(cellPos, Vector2Int.left);
+        bool hasFieldRight = CheckForNeighborAdvanced(cellPos, Vector2Int.right);
 
-        int spriteIndex = GetSpriteIndex(hasFieldAbove, hasFieldBelow, hasFieldLeft, hasFieldRight);
+        var spriteType = currentAdapter.GetSpriteType(hasFieldAbove, hasFieldBelow, hasFieldLeft, hasFieldRight);
 
-        tilemap.SetTile(cellPos, tilemap.Get(spriteIndex));
+        tilemap.SetTile(cellPos, currentAdapter.GetTile(spriteType));
     }
 
     bool CheckForNeighbor(Vector3Int basePos, Vector2Int direction)
@@ -46,6 +60,25 @@ public class TileAdaptation : MonoBehaviour
             tilemap.GetTile(basePos + new Vector3Int(direction.x, direction.y, 0)) != null;
     }
 
+    bool CheckForNeighborAdvanced(Vector3Int basePos, Vector2Int direction)
+    {
+        var tile = tilemap.GetTile(basePos + new Vector3Int(direction.x, direction.y, 0));
+
+        if (tile == null) return false;
+
+        return currentAdapter != null && currentAdapter.HasTile(tile);
+    }
+
+    public void UpdateNeiborTiles(Vector3Int tilePos)
+    {
+        UpdateTile(tilePos + Vector3Int.up);
+        UpdateTile(tilePos + Vector3Int.down);
+        UpdateTile(tilePos + Vector3Int.left);
+        UpdateTile(tilePos + Vector3Int.right);
+    }
+
+    
+    [Obsolete("Will possibly not be using in future.")]
     int GetSpriteIndex(bool hasAbove, bool hasBelow, bool hasLeft, bool hasRight)
     {
         // Debug.Log(hasAbove + " " + hasBelow + " " + hasLeft + " " + hasRight);
@@ -68,9 +101,11 @@ public class TileAdaptation : MonoBehaviour
         if (!hasAbove && hasBelow && !hasLeft && hasRight) return 0;
         if (!hasAbove && hasBelow && hasRight && hasLeft) return 1;
         if (!hasAbove && hasBelow && !hasRight && hasLeft) return 2;
+
         if (hasAbove && hasBelow && !hasLeft && hasRight) return 3;
         if (hasAbove && hasBelow && hasLeft && hasRight) return 4;
         if (hasAbove && hasBelow && hasLeft && !hasRight) return 5;
+
         if (hasAbove && !hasBelow && !hasLeft && hasRight) return 6;
         if (hasAbove && !hasBelow && hasLeft && hasRight) return 7;
         if (hasAbove && !hasBelow && hasLeft && !hasRight) return 8;
@@ -87,11 +122,4 @@ public class TileAdaptation : MonoBehaviour
         return 11;
     }
 
-    public void UpdateNeiborTiles(Vector3Int tilePos)
-    {
-        UpdateTile(tilePos + Vector3Int.up);
-        UpdateTile(tilePos + Vector3Int.down);
-        UpdateTile(tilePos + Vector3Int.left);
-        UpdateTile(tilePos + Vector3Int.right);
-    }
 }

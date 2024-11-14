@@ -16,30 +16,20 @@ public enum TileMapWrapperLayers
 public class TileMapWrapper : MonoBehaviour
 {
     [SerializeField] private Tilemap tilemap;
-    [SerializeField] private Tile[] tiles;
-
-    //[SerializeField] private TileMapWrapperLayers[] ignoreLayers;
+    
     [SerializeField] private CompositeCollider2D compositeCollider2D;
 
-    //public delegate void TileChangeHandler(Vector3Int position, TileBase newTile);
-    //public event TileChangeHandler OnTileChanged;
     public UnityEvent<Vector3Int, TileBase> OnTileChanged;
 
+    //public void DrawTileWrapper(TileWrapper tile, Vector3Int centerPos)
+    //{
+    //    for(int i = 0; i < tile.Length; ++i)
+    //    {
+    //        SetTile(centerPos, tiles[i]);
 
-    //public delegate void TileChange(Vector3Int position);
-    //public event TileChange OnTileChange;
-
-    //public UnityEvent<Vector3> OnTileChange;
-
-    public void DrawTileWrapper(TileWrapper tile, Vector3Int centerPos)
-    {
-        for(int i = 0; i < tile.Length; ++i)
-        {
-            SetTile(centerPos, tiles[i]);
-
-            centerPos += i % tile.Width == 0 ? new Vector3Int(0,1) : new Vector3Int(1,0);
-        }
-    }
+    //        centerPos += i % tile.Width == 0 ? new Vector3Int(0,1) : new Vector3Int(1,0);
+    //    }
+    //}
 
     void Start()
     {
@@ -58,11 +48,11 @@ public class TileMapWrapper : MonoBehaviour
         OnTileChanged?.Invoke(position, tile);
     }
 
-    public void SetTileNotify(Vector3Int position)
-    {
-        SetTileNotify(position, tiles[9]);
-        //tilemap.SetTile(position, tiles[9]);
-    }
+    //public void SetTileNotify(Vector3Int position)
+    //{
+    //    SetTileNotify(position, tiles[9]);
+    //    //tilemap.SetTile(position, tiles[9]);
+    //}
 
     public void SetTile(Vector3Int position, TileBase tile)
     {
@@ -74,10 +64,10 @@ public class TileMapWrapper : MonoBehaviour
         return tilemap.GetTile(position);
     }
 
-    public Tile Get(int index)
-    {
-        return tiles.Length > index ? tiles[index] : null;
-    }
+    //public Tile Get(int index)
+    //{
+    //    return tiles.Length > index ? tiles[index] : null;
+    //}
 
     public bool HasTile(Vector3 worldPosition)
     {

@@ -15,8 +15,9 @@ public class BuildPreview : MonoBehaviour
     private GameObject previewInstance; 
 
     private Vector3 lastMousePosInWorld = Vector3.zero;
-    private Vector2 spriteOffset = Vector2.zero; 
+    private Vector2 spriteOffset = Vector2.zero;
 
+    public Tile tile;
 
     public bool HasPreview()
     {

@@ -11,21 +11,27 @@ public class TileAdapt : ScriptableObject
     /// Object keeps inforamtion about how tiles should adapt to each other, later I can add different adapt behaviour
     /// </summary>
 
-    [SerializeField] private TileAdaptBase[] tiles;
+    [SerializeField] private List<TileAdaptBase> tiles;
 
     public Tile GetTile(int index)
     {
-        return tiles.Length > index ? tiles[index].tile : null;
+        return tiles.Count > index ? tiles[index].tile : null;
     }
 
     public Tile GetTile(TileAdaptType type)
     {
-        return tiles.First(x => x.type == type).tile;
+        return tiles.First(x => x.type.Equals(type)).tile;
     }
+    
+
+  
 
     public bool HasTile(TileBase tile)
     {
-        return tiles.Any(x => x.tile == tile);
+        Debug.Log("Tile: " + tile.ToString());
+        foreach (var t in tiles) if (tile.Equals(t)) Debug.Log("Tiles: " + t.tile.ToString());
+
+        return tiles.Exists(x => x.tile.Equals(tile));
     }
 
     public TileAdaptType GetSpriteType(bool hasAbove, bool hasBelow, bool hasLeft, bool hasRight)

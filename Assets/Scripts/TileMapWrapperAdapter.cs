@@ -11,6 +11,8 @@ public class TileMapWrapperAdapter : MonoBehaviour
 {
     TileMapWrapper tilemap;
 
+    // TODO fix adaptation for diferent tile adtaters
+
     [SerializeField] public TileAdapt[] tileAdapters;
 
     private TileAdapt currentAdapter = null;
@@ -36,7 +38,9 @@ public class TileMapWrapperAdapter : MonoBehaviour
 
     public TileAdapt FindAdapter(TileBase tile)
     {
-        if (tileAdapters.Any(x => x.HasTile(tile))) return tileAdapters.First(x => x.HasTile(tile));
+        if (tileAdapters.Any(x => x.HasTile(tile)))
+            return tileAdapters.First(x => x.HasTile(tile));
+        
         return null;
     }
 
@@ -96,7 +100,7 @@ public class TileMapWrapperAdapter : MonoBehaviour
           17
         */
         // random default sprite
-        if (!hasAbove && !hasBelow && !hasLeft && !hasRight) return Random.Range(9, 12);
+        if (!hasAbove && !hasBelow && !hasLeft && !hasRight) return UnityEngine.Random.Range(9, 12);
 
         if (!hasAbove && hasBelow && !hasLeft && hasRight) return 0;
         if (!hasAbove && hasBelow && hasRight && hasLeft) return 1;

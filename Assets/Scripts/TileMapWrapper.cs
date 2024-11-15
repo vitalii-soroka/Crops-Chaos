@@ -19,7 +19,7 @@ public class TileMapWrapper : MonoBehaviour
     
     [SerializeField] private CompositeCollider2D compositeCollider2D;
 
-    public UnityEvent<Vector3Int, TileBase> OnTileChanged;
+    public UnityEvent<Vector3Int, Tile> OnTileChanged;
 
     //public void DrawTileWrapper(TileWrapper tile, Vector3Int centerPos)
     //{
@@ -42,7 +42,7 @@ public class TileMapWrapper : MonoBehaviour
         return compositeCollider2D != null;
     }
 
-    public void SetTileNotify(Vector3Int position, TileBase tile)
+    public void SetTileNotify(Vector3Int position, Tile tile)
     {
         tilemap.SetTile(position, tile);
         OnTileChanged?.Invoke(position, tile);

@@ -11,22 +11,13 @@ public class TileField : MonoBehaviour
 
     private TileMapWrapper tileMap;
 
-    private Tile defaultTile = null;
+    public Tile defaultTile = null;
     
     
     void Start()
     {
         tileMap = GetComponent<TileMapWrapper>();
         crops = new Dictionary<Vector3Int, GameObject>();
-
-        //TEMP
-        if (tileMap != null)
-        {
-            if (tileMap.TryGetComponent<TileMapWrapperAdapter>(out var adaptation))
-            {
-                defaultTile = adaptation.tileAdapters[0].GetTile(TileAdaptType.Default);
-            }
-        }
     }
 
     public void Dig(Vector3 position)

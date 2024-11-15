@@ -17,8 +17,6 @@ public class BuildPreview : MonoBehaviour
     private Vector3 lastMousePosInWorld = Vector3.zero;
     private Vector2 spriteOffset = Vector2.zero;
 
-    public Tile tile;
-
     public bool HasPreview()
     {
         return previewInstance != null;
@@ -36,7 +34,6 @@ public class BuildPreview : MonoBehaviour
 
         if (previewInstance != null) Destroy(previewInstance);
 
-        
         previewInstance = Instantiate(prefab, transform.position, Quaternion.identity);
         if (previewInstance != null)
         {
@@ -49,9 +46,12 @@ public class BuildPreview : MonoBehaviour
             {
                spriteOffset.x = (spriteRenderer.size.x % 2 == 0) ? 0 : cellSize / 2; 
                spriteOffset.y = (spriteRenderer.size.y % 2 == 0) ? 0 : cellSize / 2;
-            }
 
-            SetPreviewTransparency(previewInstance, 0.5f);
+                Color color = spriteRenderer.material.color;
+                color.a = 0.5f;
+                spriteRenderer.material.color = color;
+            }
+            //SetPreviewTransparency(previewInstance, 0.1f);
         }
     }
 

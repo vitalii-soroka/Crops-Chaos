@@ -1,13 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
-using UnityEngine.UIElements;
-using UnityEngine.WSA;
 
 public class BuildingManager : MonoBehaviour
 {
@@ -30,7 +24,6 @@ public class BuildingManager : MonoBehaviour
     public TileBase testTile;
 
     public UnityEvent<TileBase, Vector3> OnTileBuild;
-
 
     void Start()
     {
@@ -106,7 +99,8 @@ public class BuildingManager : MonoBehaviour
         {
             buildTileMap.
                 SetTileNotify(
-                buildTileMap.WorldToCell(buildPreview.GetPreviewPosition()), buildPreview.tile);
+                buildTileMap.WorldToCell(buildPreview.GetPreviewPosition()), 
+                buildPrefab.GetComponent<PreviewObject>().tile);
 
             // Changed Base Tile
             OnTileBuild.Invoke(testTile, buildPreview.GetPreviewPosition());

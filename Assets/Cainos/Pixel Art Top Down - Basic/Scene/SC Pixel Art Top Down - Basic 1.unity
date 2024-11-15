@@ -32018,7 +32018,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileAdapters: []
-  currentAdapter: {fileID: 0}
 --- !u!483693784 &1668445008
 TilemapRenderer:
   m_ObjectHideFlags: 0
@@ -34262,18 +34261,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1813492990}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1832820896 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 9076852637847627650, guid: d42e140ab5705344ea6d64131c49037d,
-    type: 3}
-  m_PrefabInstance: {fileID: 513221659949574334}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38da5ff1c5859bc4bb6d78552c8204c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1840828624
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -37406,7 +37393,8 @@ PrefabInstance:
       propertyPath: ground
       value: 
       objectReference: {fileID: 208862234}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9076852637847627650, guid: d42e140ab5705344ea6d64131c49037d, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -40337,6 +40325,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 24
       objectReference: {fileID: 0}
+    - target: {fileID: 4873791107753818245, guid: 72bc3ddc1785e734fa1eb117f7018517,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5307352524797939379, guid: 72bc3ddc1785e734fa1eb117f7018517,
         type: 3}
       propertyPath: currentAdapter
@@ -40368,7 +40361,13 @@ PrefabInstance:
         type: 3}
       propertyPath: tileAdapters.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: fc3804c131159c94b9be42f026110e74,
+      objectReference: {fileID: 11400000, guid: 4b3a0253b3a7cc5448792d5954f47ac0,
+        type: 2}
+    - target: {fileID: 7430554158398515024, guid: 72bc3ddc1785e734fa1eb117f7018517,
+        type: 3}
+      propertyPath: defaultTile
+      value: 
+      objectReference: {fileID: 11400000, guid: 45ff72fddd2196a4f8330aac7b796c91,
         type: 2}
     - target: {fileID: 7740317006611671255, guid: 72bc3ddc1785e734fa1eb117f7018517,
         type: 3}
@@ -41345,7 +41344,7 @@ PrefabInstance:
         type: 3}
       propertyPath: gameManager
       value: 
-      objectReference: {fileID: 1832820896}
+      objectReference: {fileID: 0}
     - target: {fileID: 8986266282446724208, guid: 2dac3d243ca3ba648b0ac0d4783c4475,
         type: 3}
       propertyPath: m_Layer

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3360050416627187917}
   - component: {fileID: 8299145718278330079}
+  - component: {fileID: -5121892807604529314}
   m_Layer: 0
   m_Name: Fence
   m_TagString: Untagged
@@ -84,3 +85,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-5121892807604529314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5220144661404492029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0b8aa47d3412054891cc2064d4bddb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tile: {fileID: 11400000, guid: be2265a72742e904b822bc43f7f7b713, type: 2}

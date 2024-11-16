@@ -20,6 +20,9 @@ public class Inventory : MonoBehaviour
     [SerializeField] Pickup pickup;
     [SerializeField] Magnet magnet;
 
+    //[SerializeField] Transform dropPosition;
+    [SerializeField] float dropPosOffset = 1.0f;
+
     void Start()
     {
         slots = new List<InventorySlot>();
@@ -223,7 +226,10 @@ public class Inventory : MonoBehaviour
         if (slots[currentIndex].item == null || slots[currentIndex].item.itemPrefab == null) return;
 
         var dropItem = Instantiate(slots[currentIndex].item.itemPrefab);
-        dropItem.transform.position = transform.position;
+        dropItem.transform.position = transform.position + new Vector3(
+            dropPosOffset * throwDirection.normalized.x,
+            dropPosOffset * throwDirection.normalized.y,
+            0.0f);
 
         if (dropItem.TryGetComponent(out DroppedItem dropComponent))
         {

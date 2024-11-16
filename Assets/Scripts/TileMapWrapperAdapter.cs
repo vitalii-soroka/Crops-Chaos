@@ -9,36 +9,33 @@ using static UnityEditorInternal.ReorderableList;
 
 public class TileMapWrapperAdapter : MonoBehaviour
 {
-    TileMapWrapper tilemap;
-
-    // TODO fix adaptation for diferent tile adtaters
-
-    [SerializeField] public TileAdapt[] tileAdapters;
+    [SerializeField] public List<TileAdapt> tileAdapters;
 
     private TileAdapt currentAdapter = null;
+    private TileMapWrapper tilemap;
 
     void Start()
     {
-        tilemap = GetComponent<TileMapWrapper>();
-        tilemap.OnTileChanged.AddListener(OnTileChanged);
+        if (TryGetComponent<TileMapWrapper>(out var getResult))
+        {
+            tilemap = getResult;
+            tilemap.OnTileChanged.AddListener(OnTileChanged);
+        }
     }
 
     public void OnTileChanged(Vector3Int position, TileBase tile)
     {
         currentAdapter = FindAdapter(tile);
-
-        // No rules for adaption
         if (currentAdapter == null) return;
 
-
         UpdateTile(position);
-        UpdateNeiborTiles(position);
-
+        UpdateNeiborTilesAdaptor(position);
+        //UpdateNeiborTiles(position);
     }
 
     public TileAdapt FindAdapter(TileBase tile)
     {
-        if (tileAdapters.Any(x => x.HasTile(tile)))
+        if (tileAdapters.Exists(x => x.HasTile(tile)))
             return tileAdapters.First(x => x.HasTile(tile));
         
         return null;
@@ -53,7 +50,8 @@ public class TileMapWrapperAdapter : MonoBehaviour
         bool hasFieldLeft = CheckForNeighborAdvanced(cellPos, Vector2Int.left);
         bool hasFieldRight = CheckForNeighborAdvanced(cellPos, Vector2Int.right);
 
-        var spriteType = currentAdapter.GetSpriteType(hasFieldAbove, hasFieldBelow, hasFieldLeft, hasFieldRight);
+        var spriteType 
+            = currentAdapter.GetSpriteType(hasFieldAbove, hasFieldBelow, hasFieldLeft, hasFieldRight);
 
         tilemap.SetTile(cellPos, currentAdapter.GetTile(spriteType));
     }
@@ -81,7 +79,27 @@ public class TileMapWrapperAdapter : MonoBehaviour
         UpdateTile(tilePos + Vector3Int.right);
     }
 
-    
+    public void UpdateNeiborTilesAdaptor(Vector3Int tilePos)
+    {
+        UpdateTileIfSameAdapter(tilePos + Vector3Int.up);
+        UpdateTileIfSameAdapter(tilePos + Vector3Int.down);
+        UpdateTileIfSameAdapter(tilePos + Vector3Int.left);
+        UpdateTileIfSameAdapter(tilePos + Vector3Int.right);
+    }
+
+    private void UpdateTileIfSameAdapter(Vector3Int neighborPos)
+    {
+        var neighborTile = tilemap.GetTile(neighborPos);
+        if (neighborTile == null) return;
+
+        var neighborAdapter = FindAdapter(neighborTile);
+        if (neighborAdapter == null) return;
+
+        if (neighborAdapter == currentAdapter)
+            UpdateTile(neighborPos);
+    }
+
+
     [Obsolete("Will possibly not be using in future.")]
     int GetSpriteIndex(bool hasAbove, bool hasBelow, bool hasLeft, bool hasRight)
     {

@@ -12,13 +12,14 @@ public class Weapon : MonoBehaviour
 
     [SerializeField] float sinceLastAttack = 0.0f;
 
-    private List<string> collisionTags = new List<string>();
+
+    [SerializeField] private float attackRange = 0.0f;
+    [SerializeField] private Vector2 attackBoxSize = new Vector2(2.0f, 1.0f);
+
+    [SerializeField] private List<string> collisionTags = new List<string> { "Enemy" };
 
     void Start()
     {
-        // TODO
-        collisionTags.Add("Enemy");
-
         hitCollider = GetComponent<Collider2D>();
         SetCollider(false);
     }
@@ -29,13 +30,63 @@ public class Weapon : MonoBehaviour
         {
             sinceLastAttack += Time.deltaTime;
         }
+
         if (sinceLastAttack > attackTime)
         {
             SetCollider(false);
         }
     }
 
+    private void RotateTowardsMouse()
+    {
+        if (Camera.main == null) return;
+
+        // Get mouse position in world space
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePosition.z = 0;
+
+        // Calculate the direction from the player to the mouse
+        Vector3 direction = (mousePosition - this.gameObject.transform.position).normalized;
+
+        // Rotate the weapon to face the direction
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+    }
+
     public void Attack()
+    {
+        if (sinceLastAttack < coolDown) return;
+
+        RotateTowardsMouse();
+
+        sinceLastAttack = 0.0f;
+
+        // Calculate the attack area center based on weapon's position and direction
+        Vector3 attackCenter = transform.position + transform.right * attackRange;
+
+        // Perform an OverlapBox check
+        Collider2D[] hits = Physics2D.OverlapBoxAll(attackCenter, attackBoxSize, transform.eulerAngles.z);
+        foreach (Collider2D hit in hits)
+        {
+            if (hit == null || hit.gameObject == gameObject) continue;
+
+            if (collisionTags.Contains(hit.tag))
+            {
+                if (hit.TryGetComponent<Health>(out var health))
+                {
+                    health.TakeDamage(damage);
+                    Debug.Log("Damage");
+                }
+            }
+
+            if (hit.TryGetComponent<Dropable>(out var drop))
+            {
+                drop.Drop();
+            }
+        }
+    }
+
+    public void AttackOld()
     {
         if (sinceLastAttack >= coolDown)
         {
@@ -72,7 +123,6 @@ public class Weapon : MonoBehaviour
             //else Destroy(drop.gameObject);
         }
     }
-
     private enum WeaponState
     {
         None = 0,
@@ -87,6 +137,20 @@ public class Weapon : MonoBehaviour
             Gizmos.DrawCube(hitCollider.transform.position, 
                 new Vector3(2, 1f, 1f));
         }
+
+
+        // Calculate the attack area center based on the weapon's position and direction
+        Vector3 attackCenter = transform.position + transform.right * attackRange;
+
+        // Set Gizmo color for visibility
+        Gizmos.color = Color.red;
+
+        // Draw the attack box area in the scene view for debugging
+        Gizmos.DrawWireCube(attackCenter, attackBoxSize);
+
+        // Optionally, draw a line from the player to show the direction
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(transform.position, attackCenter);
     }
 #endif
 

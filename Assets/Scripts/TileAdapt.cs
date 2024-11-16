@@ -28,8 +28,8 @@ public class TileAdapt : ScriptableObject
 
     public bool HasTile(TileBase tile)
     {
-        Debug.Log("Tile: " + tile.ToString());
-        foreach (var t in tiles) if (tile.Equals(t)) Debug.Log("Tiles: " + t.tile.ToString());
+        //Debug.Log("Tile: " + tile.ToString());
+        //foreach (var t in tiles) if (tile.Equals(t)) Debug.Log("Tiles: " + t.tile.ToString());
 
         return tiles.Exists(x => x.tile.Equals(tile));
     }

@@ -35,6 +35,8 @@ public class Health : MonoBehaviour
             {
                 healthBar.gameObject.transform.SetParent(canvas.transform, false);
 
+                healthBar.interactable = false;
+
                 healthBar.maxValue = maxHealth;
                 healthBar.value = currentHealth;
 

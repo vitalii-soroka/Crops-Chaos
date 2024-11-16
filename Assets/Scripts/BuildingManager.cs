@@ -109,7 +109,16 @@ public class BuildingManager : MonoBehaviour
         // Build other objects
         else
         {
-            var build = Instantiate(buildPrefab, buildPreview.GetPreviewPosition(), Quaternion.identity);
+            GameObject build = null;
+
+            if (buildPreview.TryGetComponent<PreviewObject>(out var prev))
+            {
+                build = Instantiate(prev.prefab, buildPreview.GetPreviewPosition(), Quaternion.identity);
+            }
+            else
+            {
+                build = Instantiate(buildPrefab, buildPreview.GetPreviewPosition(), Quaternion.identity);
+            }
 
             if (buildParent != null && build != null)
             {
@@ -159,8 +168,6 @@ public class BuildingManager : MonoBehaviour
                 );
             Vector2 boxCenter = lastPreviewPosition;
 
-
-            // TODO add layer mask
             Collider2D hitCollider = Physics2D.OverlapBox(boxCenter, boxSize, 0f);
             if (hitCollider != null)
             {

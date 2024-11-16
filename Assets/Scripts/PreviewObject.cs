@@ -10,5 +10,6 @@ public class PreviewObject : MonoBehaviour
 
     public Tile tile;
 
+    public GameObject prefab;
 
 }

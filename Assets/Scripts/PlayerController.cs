@@ -29,14 +29,9 @@ public class PlayerController : MonoBehaviour
     // TO EDIT FOR USING ITEM FROM INVENTORY LIKE SEEDS
     //[SerializeField] GameObject cropPrefabTest;
     
-    [SerializeField] TriggerChecker smallTrigger;
-    [SerializeField] TriggerChecker mediumTrigger;
-    [SerializeField] TriggerChecker bigTrigger;
-
-    //[SerializeField] TileField field;
-
-    //[SerializeField] GameActionsManager gameManager;
-    //[SerializeField] GameActionsManager gameManager;
+    //[SerializeField] TriggerChecker smallTrigger;
+    //[SerializeField] TriggerChecker mediumTrigger;
+    //[SerializeField] TriggerChecker bigTrigger;
 
     Inventory inventory;
 
@@ -46,10 +41,10 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
 
         // TO EDIT
-        if(smallTrigger == null) smallTrigger = GetComponentInChildren<TriggerChecker>();
+        //if(smallTrigger == null) smallTrigger = GetComponentInChildren<TriggerChecker>();
 
 
-        if (inventory == null) inventory = GetComponentInChildren<Inventory>();
+        //if (inventory == null) inventory = GetComponentInChildren<Inventory>();
     }
 
     //void FieldTileInteraction()
@@ -117,6 +112,14 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         UpdateAxis();
+
+        if (Input.GetMouseButton(0))
+        {
+            if (weapon != null)
+            {
+                weapon.Attack();
+            }
+        }
 
         if (Input.GetMouseButtonDown(1))
         {

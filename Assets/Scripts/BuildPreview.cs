@@ -44,12 +44,14 @@ public class BuildPreview : MonoBehaviour
 
             if (previewInstance.TryGetComponent<SpriteRenderer>(out var spriteRenderer))
             {
+               //Debug.Log($"spriteRenderer: {spriteRenderer.size.x} : {spriteRenderer.size.y}");
                spriteOffset.x = (spriteRenderer.size.x % 2 == 0) ? 0 : cellSize / 2; 
                spriteOffset.y = (spriteRenderer.size.y % 2 == 0) ? 0 : cellSize / 2;
+               //Debug.Log($"spriteOffset: {spriteOffset.x} : {spriteOffset.y}");
 
-                Color color = spriteRenderer.material.color;
-                color.a = 0.5f;
-                spriteRenderer.material.color = color;
+               Color color = spriteRenderer.material.color;
+               color.a = 0.5f;
+               spriteRenderer.material.color = color;
             }
             //SetPreviewTransparency(previewInstance, 0.1f);
         }
